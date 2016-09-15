@@ -8,10 +8,9 @@ open import Algebra.Category
 open import Algebra.Relation
 open import Agda.Builtin.FromNat
 open import Agda.Builtin.Nat
-open import Agda.Builtin.Nat
+open import Agda.Builtin.Nat public
   renaming (Nat to ℕ)
   using (suc; zero)
-  public
 open import Core
 open import Equality
 
