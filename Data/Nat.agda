@@ -11,6 +11,9 @@ open import Agda.Builtin.Nat
 open import Agda.Builtin.Nat public
   renaming (Nat to ℕ)
   using (suc; zero)
+open import Agda.Builtin.Nat public
+  renaming (_+_ to _+ℕ_; _*_ to _*ℕ_)
+  using ()
 open import Core
 open import Equality
 
@@ -92,6 +95,8 @@ module ℕ-Props where
   where
   open Equiv (PropEq ℕ)
 
+module + = Category ℕ-+
+
 
 ℕ-* : Category
 ℕ-* =
@@ -108,3 +113,5 @@ module ℕ-Props where
     left-id = λ {_} {_} {x} → ℕ-Props.+-right-id x;
     right-id = λ {_} {_} {x} → ℕ-Props.*-right-id x
   }
+
+module * = Category ℕ-+
