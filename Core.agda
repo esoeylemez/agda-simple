@@ -29,6 +29,12 @@ A × B = Σ A (λ _ → B)
 infixr 7 _×_
 
 
+_$_ : ∀ {a} {A : Set a} → A → A
+_$_ f = f
+
+infixr 0 _$_
+
+
 it : ∀ {a} {A : Set a} {{_ : A}} → A
 it {{x}} = x
 
