@@ -5,6 +5,7 @@
 module Equality where
 
 open import Agda.Builtin.Equality
+open import Agda.Builtin.Equality using (_≡_) public
 open import Algebra.Relation
 open import Core
 
