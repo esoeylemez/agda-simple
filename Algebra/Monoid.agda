@@ -32,3 +32,31 @@ record Monoid {a} {r} : Set (lsuc (a ⊔ r)) where
 
   open Category category public
     using (id-unique)
+
+
+-- A monoid morphism is a semigroup morphism that also preserves
+-- identities.
+
+record MonoidMorphism
+       {sa sr ta tr}
+       (M : Monoid {sa} {sr})
+       (N : Monoid {ta} {tr})
+       : Set (sa ⊔ ta ⊔ sr ⊔ tr)
+       where
+
+  private
+    module M = Monoid M
+    module N = Monoid N
+
+  field semigroupMorphism : SemigroupMorphism M.semigroup N.semigroup
+  open SemigroupMorphism semigroupMorphism public
+
+  field
+    id-preserving : map M.id N.≈ N.id
+
+  functor : Functor M.category N.category
+  functor =
+    record {
+      semifunctor = semifunctor;
+      id-preserve = id-preserving
+    }
