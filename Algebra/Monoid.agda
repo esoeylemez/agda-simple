@@ -5,11 +5,12 @@
 module Algebra.Monoid where
 
 open import Algebra.Category
-open import Algebra.Groupoid
 open import Algebra.Relation
 open import Algebra.Semigroup
 open import Core
 
+
+-- A monoid is a semigroup with an identity element.
 
 record Monoid {a} {r} : Set (lsuc (a ⊔ r)) where
   field semigroup : Semigroup {a} {r}
@@ -31,22 +32,3 @@ record Monoid {a} {r} : Set (lsuc (a ⊔ r)) where
 
   open Category category public
     using (id-unique)
-
-
-record Group {a} {r} : Set (lsuc (a ⊔ r)) where
-  field monoid : Monoid {a} {r}
-  open Monoid monoid public
-
-  field
-    inv : A → A
-    inv-cong : ∀ {x y} → x ≈ y → inv x ≈ inv y
-    left-inv : ∀ {x} → inv x ⋄ x ≈ id
-
-  groupoid : Groupoid
-  groupoid =
-    record {
-      category = category;
-      inv = inv;
-      inv-cong = inv-cong;
-      left-inv = left-inv
-    }
