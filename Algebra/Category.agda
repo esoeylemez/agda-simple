@@ -89,3 +89,5 @@ SetC {r} =
     → f1 ≈ f2 → g1 ≈ g2 → f1 ∘ g1 ≈ f2 ∘ g2
   ∘-cong {f1 = f1} f1≈f2 g1≈g2 x =
     P.trans (cong f1 (g1≈g2 _)) (f1≈f2 _)
+
+module SetC {r} = Category (SetC {r})
