@@ -60,3 +60,25 @@ record MonoidMorphism
       semifunctor = semifunctor;
       id-preserving = id-preserving
     }
+
+
+-- An equivalence relation on monoid morphisms.
+
+MonoidMorphismEq :
+  ∀ {ma mr na nr}
+    {M : Monoid {ma} {mr}} {N : Monoid {na} {nr}}
+  → Equiv _ (MonoidMorphism M N)
+MonoidMorphismEq {N = N} =
+  record {
+    _≈_ = λ F G →
+            let module F = MonoidMorphism F
+                module G = MonoidMorphism G
+            in ∀ x → F.map x ≈ G.map x;
+    refl = λ _ → refl;
+    sym = λ x≈y x → sym (x≈y x);
+    trans = λ x≈y y≈z x → trans (x≈y x) (y≈z x)
+  }
+
+  where
+  module N = Monoid N
+  open Equiv N.Eq
