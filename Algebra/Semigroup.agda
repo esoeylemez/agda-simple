@@ -31,3 +31,29 @@ record Semigroup {a} {r} : Set (lsuc (a ⊔ r)) where
       ∘-cong = ⋄-cong;
       assoc = assoc
     }
+
+
+record SemigroupMorphism
+       {sa sr ta tr}
+       (S : Semigroup {sa} {sr})
+       (T : Semigroup {ta} {tr})
+       : Set (sa ⊔ ta ⊔ sr ⊔ tr)
+       where
+
+  private
+    module S = Semigroup S
+    module T = Semigroup T
+
+  field
+    map : S.A → T.A
+    map-cong : ∀ {x y} → x S.≈ y → map x T.≈ map y
+    ⋄-preserving : ∀ {x y} → map (x S.⋄ y) T.≈ map x T.⋄ map y
+
+  semifunctor : Semifunctor S.semigroupoid T.semigroupoid
+  semifunctor =
+    record {
+      F = λ _ → tt;
+      map = map;
+      map-cong = map-cong;
+      ∘-preserving = ⋄-preserving
+    }
