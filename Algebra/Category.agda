@@ -58,8 +58,8 @@ record Functor {cc ch cr dc dh dr}
 
 -- Category of types and functions.
 
-SetC : ∀ r → Category
-SetC r =
+SetC : ∀ {r} → Category
+SetC {r} =
   record {
     semigroupoid = record {
       Ob = Set r;
