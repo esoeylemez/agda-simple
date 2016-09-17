@@ -53,7 +53,7 @@ record Functor {cc ch cr dc dh dr}
   open Semifunctor semifunctor public
 
   field
-    id-preserve : ∀ {A} → map (C.id {A}) D.≈ D.id {F A}
+    id-preserving : ∀ {A} → map (C.id {A}) D.≈ D.id {F A}
 
 
 -- Category of types and functions.

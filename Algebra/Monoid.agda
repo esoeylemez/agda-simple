@@ -58,5 +58,5 @@ record MonoidMorphism
   functor =
     record {
       semifunctor = semifunctor;
-      id-preserve = id-preserving
+      id-preserving = id-preserving
     }
