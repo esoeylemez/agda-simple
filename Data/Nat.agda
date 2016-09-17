@@ -4,16 +4,13 @@
 
 module Data.Nat where
 
-open import Algebra.Category
+open import Algebra.Monoid
 open import Algebra.Relation
 open import Agda.Builtin.FromNat
 open import Agda.Builtin.Nat
 open import Agda.Builtin.Nat public
   renaming (Nat to ℕ)
-  using (suc; zero)
-open import Agda.Builtin.Nat public
-  renaming (_+_ to _+ℕ_; _*_ to _*ℕ_)
-  using ()
+  using (suc; zero; _+_; _*_)
 open import Core
 open import Equality
 
@@ -27,7 +24,10 @@ instance
     }
 
 
-module ℕ-Props where
+-- This is a module of basic properties.  If available you should prefer
+-- the algebraic interface defined below this module.
+
+module Props where
   open Equiv (PropEq ℕ)
   open Reasoning
 
@@ -76,42 +76,40 @@ module ℕ-Props where
   *-right-id (suc x) = cong suc (*-right-id x)
 
 
-ℕ-+ : Category
-ℕ-+ =
++ : Monoid
++ =
   record {
-    semigroupoid = record {
-      Ob = ⊤;
-      Hom = λ _ _ → ℕ;
+    semigroup = record {
+      A = ℕ;
       Eq = PropEq _;
-      _∘_ = _+_;
-      ∘-cong = cong2 _+_;
-      assoc = λ {_} {_} {_} {_} {x} {y} {z} → ℕ-Props.+-assoc x y z
+      _⋄_ = _+_;
+      ⋄-cong = cong2 _+_;
+      assoc = λ {x} {y} {z} → Props.+-assoc x y z
     };
     id = 0;
     left-id = refl;
-    right-id = λ {_} {_} {x} → ℕ-Props.+-right-id x
+    right-id = λ {x} → Props.+-right-id x
   }
 
   where
   open Equiv (PropEq ℕ)
 
-module + = Category ℕ-+
+module + = Monoid +
 
 
-ℕ-* : Category
-ℕ-* =
+* : Monoid
+* =
   record {
-    semigroupoid = record {
-      Ob = ⊤;
-      Hom = λ _ _ → ℕ;
+    semigroup = record {
+      A = ℕ;
       Eq = PropEq ℕ;
-      _∘_ = _*_;
-      ∘-cong = cong2 _*_;
-      assoc = λ {_} {_} {_} {_} {x} {y} {z} → ℕ-Props.*-assoc x y z
+      _⋄_ = _*_;
+      ⋄-cong = cong2 _*_;
+      assoc = λ {x} {y} {z} → Props.*-assoc x y z
     };
     id = 1;
-    left-id = λ {_} {_} {x} → ℕ-Props.+-right-id x;
-    right-id = λ {_} {_} {x} → ℕ-Props.*-right-id x
+    left-id = λ {x} → Props.+-right-id x;
+    right-id = λ {x} → Props.*-right-id x
   }
 
-module * = Category ℕ-+
+module * = Monoid *
