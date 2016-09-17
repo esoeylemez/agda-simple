@@ -9,6 +9,8 @@ open import Algebra.Semigroupoid
 open import Core
 
 
+-- A semigroup is an associative binary function.
+
 record Semigroup {a} {r} : Set (lsuc (a ⊔ r)) where
   field
     A  : Set a
@@ -32,6 +34,9 @@ record Semigroup {a} {r} : Set (lsuc (a ⊔ r)) where
       assoc = assoc
     }
 
+
+-- A semigroup morphism is a function that maps the elements of one
+-- semigroup to another while preserving the compositional structure.
 
 record SemigroupMorphism
        {sa sr ta tr}
