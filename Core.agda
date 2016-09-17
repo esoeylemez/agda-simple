@@ -15,8 +15,11 @@ open import Agda.Primitive using (Level; lsuc; lzero; _⊔_) public
 data ⊥ : Set where
 
 
-data Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ b) where
-  _,_ : (x : A) → (p : B x) → Σ A B
+record Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ b) where
+  constructor _,_
+  field
+    fst : A
+    snd : B fst
 
 infixr 4 _,_
 
