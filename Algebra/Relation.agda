@@ -7,13 +7,13 @@ module Algebra.Relation where
 open import Core
 
 
-Rel : ∀ {a} r (A : Set a) → Set (a ⊔ lsuc r)
-Rel r A = A → A → Set r
+Rel : ∀ {a} {r} (A : Set a) → Set (a ⊔ lsuc r)
+Rel {a} {r} A = A → A → Set r
 
 
-record Equiv {a} r (A : Set a) : Set (a ⊔ lsuc r) where
+record Equiv {a} {r} (A : Set a) : Set (a ⊔ lsuc r) where
   field
-    _≈_   : Rel r A
+    _≈_   : Rel {r = r} A
     refl  : ∀ {x} → x ≈ x
     sym   : ∀ {x y} → x ≈ y → y ≈ x
     trans : ∀ {x y z} → x ≈ y → y ≈ z → x ≈ z

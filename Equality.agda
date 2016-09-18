@@ -10,7 +10,7 @@ open import Algebra.Relation
 open import Core
 
 
-PropEq : ∀ {a} → (A : Set a) → Equiv _ A
+PropEq : ∀ {a} → (A : Set a) → Equiv A
 PropEq A =
   record {
     _≈_ = _≡_;
@@ -27,7 +27,7 @@ PropEq A =
   trans' refl q = q
 
 
-PropFuncEq : ∀ {a b} (A : Set a) (B : Set b) → Equiv _ (A → B)
+PropFuncEq : ∀ {a b} (A : Set a) (B : Set b) → Equiv (A → B)
 PropFuncEq A B =
   record {
     _≈_ = λ f g → ∀ x → f x ≡ g x;

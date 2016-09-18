@@ -15,7 +15,7 @@ open import Core
 record Semigroup {a} {r} : Set (lsuc (a ⊔ r)) where
   field
     A  : Set a
-    Eq : Equiv r A
+    Eq : Equiv {r = r} A
 
   open Equiv Eq public
 
@@ -70,7 +70,7 @@ record SemigroupMorphism
 SemigroupMorphismEq :
   ∀ {sa sr ta tr}
     {S : Semigroup {sa} {sr}} {T : Semigroup {ta} {tr}}
-  → Equiv _ (SemigroupMorphism S T)
+  → Equiv (SemigroupMorphism S T)
 SemigroupMorphismEq {T = T} =
   record {
     _≈_ = λ F G →

@@ -15,7 +15,7 @@ record Semigroupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   field
     Ob  : Set c
     Hom : Ob → Ob → Set h
-    Eq  : ∀ {A B} → Equiv r (Hom A B)
+    Eq  : ∀ {A B} → Equiv {r = r} (Hom A B)
     _∘_ : ∀ {A B C} → Hom B C → Hom A B → Hom A C
 
   infixl 6 _∘_

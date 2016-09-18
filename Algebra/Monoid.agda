@@ -67,7 +67,7 @@ record MonoidMorphism
 MonoidMorphismEq :
   ∀ {ma mr na nr}
     {M : Monoid {ma} {mr}} {N : Monoid {na} {nr}}
-  → Equiv _ (MonoidMorphism M N)
+  → Equiv (MonoidMorphism M N)
 MonoidMorphismEq {N = N} =
   record {
     _≈_ = λ F G →
