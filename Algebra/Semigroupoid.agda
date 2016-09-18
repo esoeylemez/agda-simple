@@ -4,7 +4,6 @@
 
 module Algebra.Semigroupoid where
 
-open import Algebra.Relation
 open import Core
 
 

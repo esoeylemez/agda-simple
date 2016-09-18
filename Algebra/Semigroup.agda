@@ -5,18 +5,13 @@
 module Algebra.Semigroup where
 
 open import Algebra.Category
-open import Algebra.Relation
 open import Algebra.Semigroupoid
 open import Core
 
 
 -- A semigroup is an associative binary function.
 
-record Semigroup {a} {r} : Set (lsuc (a ⊔ r)) where
-  field
-    A  : Set a
-    Eq : Equiv {r = r} A
-
+record SemigroupOver {a r} (A : Set a) (Eq : Equiv {r = r} A) : Set (a ⊔ r) where
   open Equiv Eq public
 
   field
@@ -34,6 +29,16 @@ record Semigroup {a} {r} : Set (lsuc (a ⊔ r)) where
       ∘-cong = ⋄-cong;
       assoc = assoc
     }
+
+  infixr 6 _⋄_
+
+record Semigroup {a r} : Set (lsuc (a ⊔ r)) where
+  field
+    A : Set a
+    Eq : Equiv {r = r} A
+    semigroupOver : SemigroupOver A Eq
+
+  open SemigroupOver semigroupOver public
 
 
 -- A semigroup morphism is a function that maps the elements of one
@@ -106,7 +111,7 @@ Semigroups {a} {r} =
   }
 
   where
-  open module MyEquiv {S} {T} = Equiv (SemigroupMorphismEq {S = S} {T = T})
+  open module MyEquiv {S T} = Equiv (SemigroupMorphismEq {S = S} {T = T})
 
   _∘_ : ∀ {S T U} → SemigroupMorphism T U → SemigroupMorphism S T → SemigroupMorphism S U
   _∘_ {S} {T} {U} F G =
@@ -114,18 +119,17 @@ Semigroups {a} {r} =
       map = F.map SetC.∘ G.map;
       map-cong = λ p → F.map-cong (G.map-cong p);
       ⋄-preserving = λ x y →
-        begin
-          F.map (G.map (x S.⋄ y))             || F.map-cong (G.⋄-preserving _ _) ::
-          F.map (G.map x T.⋄ G.map y)         || F.⋄-preserving _ _ ::
+        U.begin
+          F.map (G.map (x S.⋄ y))             U.|| F.map-cong (G.⋄-preserving _ _) ::
+          F.map (G.map x T.⋄ G.map y)         U.|| F.⋄-preserving _ _ ::
           F.map (G.map x) U.⋄ F.map (G.map y)
-        qed
+        U.qed
     }
 
     where
     module S = Semigroup S
     module T = Semigroup T
     module U = Semigroup U
-    open U.Reasoning
 
     module F = SemigroupMorphism F
     module G = SemigroupMorphism G
@@ -136,15 +140,14 @@ Semigroups {a} {r} =
       {G1 G2 : SemigroupMorphism S T}
     → F1 ≈ F2 → G1 ≈ G2 → F1 ∘ G1 ≈ F2 ∘ G2
   ∘-cong {U = U} {F1} {F2} {G1} {G2} F1≈F2 G1≈G2 x =
-    begin
-      F1.map (G1.map x) || F1.map-cong (G1≈G2 _) ::
-      F1.map (G2.map x) || F1≈F2 _ ::
+    U.begin
+      F1.map (G1.map x) U.|| F1.map-cong (G1≈G2 _) ::
+      F1.map (G2.map x) U.|| F1≈F2 _ ::
       F2.map (G2.map x)
-    qed
+    U.qed
 
     where
     module U = Semigroup U
-    open U.Reasoning
 
     module F1 = SemigroupMorphism F1
     module F2 = SemigroupMorphism F2

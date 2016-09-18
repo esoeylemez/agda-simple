@@ -4,10 +4,8 @@
 
 module Algebra.Category where
 
-open import Algebra.Relation
 open import Algebra.Semigroupoid
 open import Core
-open import Equality
 
 
 -- A category is a semigroupoid with an identity morphism on every
@@ -21,8 +19,6 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
     id : ∀ {A} → Hom A A
     left-id  : ∀ {A B} (f : Hom A B) → id ∘ f ≈ f
     right-id : ∀ {A B} (f : Hom A B) → f ∘ id ≈ f
-
-  open Reasoning
 
   -- The identity morphism is unique for each object.
   id-unique :

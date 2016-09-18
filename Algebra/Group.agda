@@ -4,16 +4,16 @@
 
 module Algebra.Group where
 
-open import Algebra.Monoid
 open import Algebra.Groupoid
+open import Algebra.Monoid
 open import Core
 
 
 -- A group is a monoid where all elements are invertible.
 
-record Group {a} {r} : Set (lsuc (a ⊔ r)) where
-  field monoid : Monoid {a} {r}
-  open Monoid monoid public
+record GroupOver {a r} (A : Set a) (Eq : Equiv {r = r} A) : Set (a ⊔ r) where
+  field monoidOver : MonoidOver A Eq
+  open MonoidOver monoidOver public
 
   field
     inv : A → A
@@ -27,4 +27,20 @@ record Group {a} {r} : Set (lsuc (a ⊔ r)) where
       inv = inv;
       inv-cong = inv-cong;
       left-inv = left-inv
+    }
+
+record Group {a r} : Set (lsuc (a ⊔ r)) where
+  field
+    A : Set a
+    Eq : Equiv {r = r} A
+    groupOver : GroupOver A Eq
+
+  open GroupOver groupOver public
+
+  monoid : Monoid
+  monoid =
+    record {
+      A = A;
+      Eq = Eq;
+      monoidOver = monoidOver
     }

@@ -19,8 +19,6 @@ record Groupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
     inv-cong : ∀ {A B} {f g : Hom A B} → f ≈ g → inv f ≈ inv g
     left-inv : ∀ {A B} (f : Hom A B) → inv f ∘ f ≈ id
 
-  open Reasoning
-
   -- Inverses are unique for each morphism.
   inv-unique : ∀ {A B} {inv-f' : Hom A B} {f} → f ∘ inv-f' ≈ id → inv-f' ≈ inv f
   inv-unique {inv-f' = inv-f'} {f = f} right-inv' =
