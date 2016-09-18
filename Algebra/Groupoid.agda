@@ -17,7 +17,7 @@ record Groupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   field
     inv : ∀ {A B} → Hom A B → Hom B A
     inv-cong : ∀ {A B} {f g : Hom A B} → f ≈ g → inv f ≈ inv g
-    left-inv : ∀ {A B} {f : Hom A B} → inv f ∘ f ≈ id
+    left-inv : ∀ {A B} (f : Hom A B) → inv f ∘ f ≈ id
 
   open Reasoning
 
@@ -25,11 +25,11 @@ record Groupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   inv-unique : ∀ {A B} {inv-f' : Hom A B} {f} → f ∘ inv-f' ≈ id → inv-f' ≈ inv f
   inv-unique {inv-f' = inv-f'} {f = f} right-inv' =
     begin
-      inv-f'               || sym left-id ::
-      id ∘ inv-f'          || ∘-cong (sym left-inv) refl ::
-      (inv f ∘ f) ∘ inv-f' || assoc ::
+      inv-f'               || sym (left-id _) ::
+      id ∘ inv-f'          || ∘-cong (sym (left-inv _)) refl ::
+      (inv f ∘ f) ∘ inv-f' || assoc _ _ _ ::
       inv f ∘ (f ∘ inv-f') || ∘-cong refl right-inv' ::
-      inv f ∘ id           || right-id ::
+      inv f ∘ id           || right-id _ ::
       inv f
     qed
 
@@ -37,11 +37,11 @@ record Groupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   inv-invol : ∀ {A B} {f : Hom A B} → inv (inv f) ≈ f
   inv-invol {f = f} =
     begin
-      inv (inv f)               || sym right-id ::
-      inv (inv f) ∘ id          || ∘-cong refl (sym left-inv) ::
-      inv (inv f) ∘ (inv f ∘ f) || sym assoc ::
-      (inv (inv f) ∘ inv f) ∘ f || ∘-cong left-inv refl ::
-      id ∘ f                    || left-id ::
+      inv (inv f)               || sym (right-id _) ::
+      inv (inv f) ∘ id          || ∘-cong refl (sym (left-inv _)) ::
+      inv (inv f) ∘ (inv f ∘ f) || sym (assoc _ _ _) ::
+      (inv (inv f) ∘ inv f) ∘ f || ∘-cong (left-inv _) refl ::
+      id ∘ f                    || left-id _ ::
       f
     qed
 
@@ -50,6 +50,6 @@ record Groupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   right-inv {f = f} =
     begin
       f ∘ inv f           || ∘-cong (sym inv-invol) refl ::
-      inv (inv f) ∘ inv f || left-inv ::
+      inv (inv f) ∘ inv f || left-inv _ ::
       id
     qed

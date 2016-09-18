@@ -84,11 +84,11 @@ module Props where
       Eq = PropEq _;
       _⋄_ = _+_;
       ⋄-cong = cong2 _+_;
-      assoc = λ {x} {y} {z} → Props.+-assoc x y z
+      assoc = Props.+-assoc
     };
     id = 0;
-    left-id = refl;
-    right-id = λ {x} → Props.+-right-id x
+    left-id = λ _ → refl;
+    right-id = Props.+-right-id
   }
 
   where
@@ -105,11 +105,11 @@ module + = Monoid +
       Eq = PropEq ℕ;
       _⋄_ = _*_;
       ⋄-cong = cong2 _*_;
-      assoc = λ {x} {y} {z} → Props.*-assoc x y z
+      assoc = Props.*-assoc
     };
     id = 1;
-    left-id = λ {x} → Props.+-right-id x;
-    right-id = λ {x} → Props.*-right-id x
+    left-id = Props.+-right-id;
+    right-id = Props.*-right-id
   }
 
 module * = Monoid *

@@ -18,7 +18,7 @@ record Group {a} {r} : Set (lsuc (a ⊔ r)) where
   field
     inv : A → A
     inv-cong : ∀ {x y} → x ≈ y → inv x ≈ inv y
-    left-inv : ∀ {x} → inv x ⋄ x ≈ id
+    left-inv : ∀ x → inv x ⋄ x ≈ id
 
   groupoid : Groupoid
   groupoid =

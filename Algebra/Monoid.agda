@@ -18,8 +18,8 @@ record Monoid {a} {r} : Set (lsuc (a ⊔ r)) where
 
   field
     id : A
-    left-id  : ∀ {x} → id ⋄ x ≈ x
-    right-id : ∀ {x} → x ⋄ id ≈ x
+    left-id  : ∀ x → id ⋄ x ≈ x
+    right-id : ∀ x → x ⋄ id ≈ x
 
   category : Category
   category =

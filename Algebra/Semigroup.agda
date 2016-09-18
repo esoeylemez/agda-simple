@@ -22,7 +22,7 @@ record Semigroup {a} {r} : Set (lsuc (a ⊔ r)) where
   field
     _⋄_ : A → A → A
     ⋄-cong : ∀ {x1 x2 y1 y2} → x1 ≈ x2 → y1 ≈ y2 → x1 ⋄ y1 ≈ x2 ⋄ y2
-    assoc  : ∀ {x y z} → (x ⋄ y) ⋄ z ≈ x ⋄ (y ⋄ z)
+    assoc  : ∀ x y z → (x ⋄ y) ⋄ z ≈ x ⋄ (y ⋄ z)
 
   semigroupoid : Semigroupoid
   semigroupoid =
@@ -53,7 +53,7 @@ record SemigroupMorphism
   field
     map : S.A → T.A
     map-cong : ∀ {x y} → x S.≈ y → map x T.≈ map y
-    ⋄-preserving : ∀ {x y} → map (x S.⋄ y) T.≈ map x T.⋄ map y
+    ⋄-preserving : ∀ x y → map (x S.⋄ y) T.≈ map x T.⋄ map y
 
   semifunctor : Semifunctor S.semigroupoid T.semigroupoid
   semifunctor =
@@ -98,11 +98,11 @@ Semigroups {a} {r} =
       Eq = SemigroupMorphismEq;
       _∘_ = _∘_;
       ∘-cong = λ {_} {_} {_} {F1} {F2} {G1} {G2} → ∘-cong {F1 = F1} {F2} {G1} {G2};
-      assoc = λ {_} {_} {_} {_} {F} {G} {H} → assoc {F = F} {G} {H}
+      assoc = assoc
     };
     id = id;
-    left-id = λ {_} {_} {F} → left-right-id {F = F};
-    right-id = λ {_} {_} {F} → left-right-id {F = F}
+    left-id = left-right-id;
+    right-id = left-right-id
   }
 
   where
@@ -113,10 +113,10 @@ Semigroups {a} {r} =
     record {
       map = F.map SetC.∘ G.map;
       map-cong = λ p → F.map-cong (G.map-cong p);
-      ⋄-preserving = λ {x} {y} →
+      ⋄-preserving = λ x y →
         begin
-          F.map (G.map (x S.⋄ y))             || F.map-cong G.⋄-preserving ::
-          F.map (G.map x T.⋄ G.map y)         || F.⋄-preserving ::
+          F.map (G.map (x S.⋄ y))             || F.map-cong (G.⋄-preserving _ _) ::
+          F.map (G.map x T.⋄ G.map y)         || F.⋄-preserving _ _ ::
           F.map (G.map x) U.⋄ F.map (G.map y)
         qed
     }
@@ -153,11 +153,11 @@ Semigroups {a} {r} =
 
   assoc :
     ∀ {S T U V}
-      {F : SemigroupMorphism U V}
-      {G : SemigroupMorphism T U}
-      {H : SemigroupMorphism S T}
+      (F : SemigroupMorphism U V)
+      (G : SemigroupMorphism T U)
+      (H : SemigroupMorphism S T)
     → (F ∘ G) ∘ H ≈ F ∘ (G ∘ H)
-  assoc {V = V} _ = V.refl
+  assoc {V = V} _ _ _ _ = V.refl
     where
     module V = Semigroup V
 
@@ -166,13 +166,13 @@ Semigroups {a} {r} =
     record {
       map = λ x → x;
       map-cong = λ x → x;
-      ⋄-preserving = Semigroup.refl S
+      ⋄-preserving = λ _ _ → Semigroup.refl S
     }
 
   left-right-id :
     ∀ {S T}
-      {F : SemigroupMorphism S T}
+      (F : SemigroupMorphism S T)
     → F ≈ F
-  left-right-id {T = T} _ = T.refl
+  left-right-id {T = T} _ _ = T.refl
     where
     module T = Semigroup T

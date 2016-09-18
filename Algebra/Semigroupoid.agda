@@ -30,7 +30,7 @@ record Semigroupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
 
     assoc :
       ∀ {A B C D}
-        {f : Hom C D} {g} {h : Hom A B}
+        (f : Hom C D) (g : Hom B C) (h : Hom A B)
       → (f ∘ g) ∘ h ≈ f ∘ (g ∘ h)
 
   Epic : ∀ {A B} → (f : Hom A B) → Set _
@@ -65,5 +65,5 @@ record Semifunctor
 
     ∘-preserving :
       ∀ {A B C}
-        {f : C.Hom B C} {g : C.Hom A B}
+        (f : C.Hom B C) (g : C.Hom A B)
       → map (f C.∘ g) D.≈ map f D.∘ map g
