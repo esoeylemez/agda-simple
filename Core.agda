@@ -30,7 +30,7 @@ record Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ b) where
     fst : A
     snd : B fst
 
-open Σ
+open Σ public
 
 infixr 4 _,_
 
