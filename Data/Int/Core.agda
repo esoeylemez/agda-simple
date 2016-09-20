@@ -39,8 +39,8 @@ instance
     }
 
 
-≡ : Equiv ℤ
-≡ = PropEq ℤ
+ℤ,≡ : Equiv ℤ
+ℤ,≡ = PropEq ℤ
 
 
 _+_ : ℤ → ℤ → ℤ

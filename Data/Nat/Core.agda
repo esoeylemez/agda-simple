@@ -19,8 +19,8 @@ instance
     }
 
 
-≡ : Equiv ℕ
-≡ = PropEq ℕ
+ℕ,≡ : Equiv ℕ
+ℕ,≡ = PropEq ℕ
 
 
 module Props where
