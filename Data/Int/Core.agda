@@ -7,6 +7,7 @@ module Data.Int.Core where
 open import Agda.Builtin.Int public
   renaming (Int to ℤ)
   using (pos; negsuc)
+open import Agda.Builtin.TrustMe
 open import Core
 open import Data.Nat.Core
   renaming (_+_ to _+ℕ_;
@@ -61,6 +62,16 @@ negsuc x * pos (suc y) = negsuc (y +ℕ x *ℕ suc y)
 negsuc x * negsuc y = pos (suc x *ℕ suc y)
 
 infixl 7 _*_
+
+
+neg : ℤ → ℤ
+neg = _*_ -1
+
+
+_-_ : ℤ → ℤ → ℤ
+x - y = x + neg y
+
+infixl 6 _-_
 
 
 module Props where
@@ -202,12 +213,51 @@ module Props where
   *-comm (negsuc x) (pos (suc y)) = cong negsuc (ℕP.suc-cong (ℕP.*-comm (suc x) (suc y)))
   *-comm (negsuc x) (negsuc y) = cong pos (ℕP.*-comm (suc x) (suc y))
 
-  -- *-+-left-dist : ∀ x a b → x * (a + b) ≈ x * a + x * b
-  -- *-+-left-dist (pos x) (pos a) (pos b) = cong pos (ℕP.*-+-left-dist x a b)
-  -- *-+-left-dist (pos x) (pos a) (negsuc b) = {!!}
-  -- *-+-left-dist (pos x) (negsuc a) (pos b) = {!!}
-  -- *-+-left-dist (pos x) (negsuc a) (negsuc b) = {!!}
-  -- *-+-left-dist (negsuc x) (pos a) (pos b) = {!!}
-  -- *-+-left-dist (negsuc x) (pos a) (negsuc b) = {!!}
-  -- *-+-left-dist (negsuc x) (negsuc a) (pos b) = {!!}
-  -- *-+-left-dist (negsuc x) (negsuc a) (negsuc b) = {!!}
+  *-left-zero : ∀ x → 0 * x ≈ 0
+  *-left-zero (pos x) = refl
+  *-left-zero (negsuc x) = refl
+
+  *-right-zero : ∀ x → x * 0 ≈ 0
+  *-right-zero x = trans (*-comm x 0) (*-left-zero x)
+
+  -- TODO
+  *-+-left-dist : ∀ x a b → x * (a + b) ≈ x * a + x * b
+  *-+-left-dist x a b = primTrustMe
+
+  -- TODO
+  *-+-right-dist : ∀ a b x → (a + b) * x ≈ a * x + b * x
+  *-+-right-dist x a b = primTrustMe
+
+  +-left-inv : ∀ x → neg x + x ≈ 0
+  +-left-inv x =
+    begin
+      -1 * x + x     || cong (-1 * x +_) (sym (*-left-id x)) ::
+      -1 * x + 1 * x || sym (*-+-right-dist -1 1 x) ::
+      0 * x          || *-left-zero x ::
+      0
+    qed
+
+  neg-invol : ∀ x → neg (neg x) ≈ x
+  neg-invol x =
+    begin
+      -1 * (-1 * x) || sym (*-assoc -1 -1 x) ::
+      1 * x         || *-left-id x ::
+      x
+    qed
+
+  +-right-inv : ∀ x → x + neg x ≈ 0
+  +-right-inv x =
+    begin
+      x + neg x           || cong (_+ neg x) (sym (neg-invol x)) ::
+      neg (neg x) + neg x || +-left-inv (neg x) ::
+      0
+    qed
+
+  neg-flip : ∀ x y → neg (x - y) ≈ y - x
+  neg-flip x y =
+    begin
+      neg (x - y)         || *-+-left-dist -1 x (neg y) ::
+      neg x + neg (neg y) || cong (neg x +_) (neg-invol y) ::
+      neg x + y           || +-comm (neg x) y ::
+      y - x
+    qed
