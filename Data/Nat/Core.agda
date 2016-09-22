@@ -117,5 +117,5 @@ module Props where
       x + y * suc x
     qed
 
-  suc-cong : ∀ {x y} → suc x ≈ suc y → x ≈ y
-  suc-cong ≡-refl = refl
+  suc-inj : ∀ {x y} → suc x ≈ suc y → x ≈ y
+  suc-inj ≡-refl = refl

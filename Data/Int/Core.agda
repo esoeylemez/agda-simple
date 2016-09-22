@@ -182,35 +182,35 @@ module Props where
       pos (x *ℕ 0)
     qed
   *-assoc (pos (suc x)) (pos (suc y)) (negsuc z) =
-    cong negsuc $ ℕP.suc-cong $
+    cong negsuc $ ℕP.suc-inj $
     ℕP.*-assoc (suc x) (suc y) (suc z)
   *-assoc (pos zero) (negsuc y) (pos zero) = refl
   *-assoc (pos zero) (negsuc y) (pos (suc z)) = refl
   *-assoc (pos (suc x)) (negsuc y) (pos zero) = cong pos (sym (ℕP.*-right-zero x))
   *-assoc (pos (suc x)) (negsuc y) (pos (suc z)) =
-    cong negsuc $ ℕP.suc-cong $
+    cong negsuc $ ℕP.suc-inj $
     ℕP.*-assoc (suc x) (suc y) (suc z)
   *-assoc (pos zero) (negsuc y) (negsuc z) = refl
   *-assoc (pos (suc x)) (negsuc y) (negsuc z) = cong pos (ℕP.*-assoc (suc x) (suc y) (suc z))
   *-assoc (negsuc x) (pos zero) (pos z) = refl
   *-assoc (negsuc x) (pos (suc y)) (pos zero) = cong (λ a → negsuc x * pos a) (sym (ℕP.*-right-zero y))
   *-assoc (negsuc x) (pos (suc y)) (pos (suc z)) =
-    cong negsuc $ ℕP.suc-cong $
+    cong negsuc $ ℕP.suc-inj $
     ℕP.*-assoc (suc x) (suc y) (suc z)
   *-assoc (negsuc x) (pos zero) (negsuc z) = refl
   *-assoc (negsuc x) (pos (suc y)) (negsuc z) = cong pos (ℕP.*-assoc (suc x) (suc y) (suc z))
   *-assoc (negsuc x) (negsuc y) (pos zero) = cong pos (ℕP.*-right-zero (y +ℕ x *ℕ suc y))
   *-assoc (negsuc x) (negsuc y) (pos (suc z)) = cong pos (ℕP.*-assoc (suc x) (suc y) (suc z))
   *-assoc (negsuc x) (negsuc y) (negsuc z) =
-    cong negsuc $ ℕP.suc-cong $
+    cong negsuc $ ℕP.suc-inj $
     ℕP.*-assoc (suc x) (suc y) (suc z)
 
   *-comm : ∀ x y → x * y ≈ y * x
   *-comm (pos x) (pos y) = cong pos (ℕP.*-comm x y)
   *-comm (pos zero) (negsuc y) = refl
-  *-comm (pos (suc x)) (negsuc y) = cong negsuc (ℕP.suc-cong (ℕP.*-comm (suc x) (suc y)))
+  *-comm (pos (suc x)) (negsuc y) = cong negsuc (ℕP.suc-inj (ℕP.*-comm (suc x) (suc y)))
   *-comm (negsuc x) (pos zero) = refl
-  *-comm (negsuc x) (pos (suc y)) = cong negsuc (ℕP.suc-cong (ℕP.*-comm (suc x) (suc y)))
+  *-comm (negsuc x) (pos (suc y)) = cong negsuc (ℕP.suc-inj (ℕP.*-comm (suc x) (suc y)))
   *-comm (negsuc x) (negsuc y) = cong pos (ℕP.*-comm (suc x) (suc y))
 
   *-left-zero : ∀ x → 0 * x ≈ 0
