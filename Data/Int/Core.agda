@@ -227,12 +227,62 @@ module Props where
   *-left-zero (pos x) = refl
   *-left-zero (negsuc x) = refl
 
+  neg-invol : ∀ x → neg (neg x) ≈ x
+  neg-invol x =
+    begin
+      -1 * (-1 * x) ≈[ sym (*-assoc -1 -1 x) ]
+      1 * x         ≈[ *-left-id x ]
+      x
+    qed
+
   *-right-zero : ∀ x → x * 0 ≈ 0
   *-right-zero x = trans (*-comm x 0) (*-left-zero x)
 
-  -- TODO
+  *-suc-dist : ∀ x y → pos (suc x) * y ≈ y + pos x * y
+  *-suc-dist x (pos y) = refl
+  *-suc-dist zero (negsuc y) = cong negsuc (ℕP.+-right-id y)
+  *-suc-dist (suc x) (negsuc y) = sub-sum-right 0 y (suc (y +ℕ x *ℕ suc y))
+
+  *-+-left-dist-ℕ : ∀ x a b → pos x * (a + b) ≈ pos x * a + pos x * b
+  *-+-left-dist-ℕ zero a b =
+    begin
+      0 * (a + b)   ≈[ *-left-zero (a + b) ]
+      0             ≈[ sym (*-left-zero a) !+! sym (*-left-zero b) ]
+      0 * a + 0 * b
+    qed
+  *-+-left-dist-ℕ (suc x) a b =
+    begin
+      pos (suc x) * (a + b)             ≈[ *-suc-dist x (a + b) ]
+      (a + b) + pos x * (a + b)         ≈[ R (a + b) !+! *-+-left-dist-ℕ x a b ]
+      (a + b) + (pos x * a + pos x * b) ≈[ +-assoc a b (pos x * a + pos x * b) ]
+      a + (b + (pos x * a + pos x * b)) ≈[ R a !+! sym (+-assoc b (pos x * a) (pos x * b)) ]
+      a + ((b + pos x * a) + pos x * b) ≈[ R a !+! (+-comm b (pos x * a) !+! R (pos x * b)) ]
+      a + ((pos x * a + b) + pos x * b) ≈[ R a !+! +-assoc (pos x * a) b (pos x * b) ]
+      a + (pos x * a + (b + pos x * b)) ≈[ sym (+-assoc a (pos x * a) (b + pos x * b)) ]
+      (a + pos x * a) + (b + pos x * b) ≈[ sym (*-suc-dist x a) !+! sym (*-suc-dist x b) ]
+      pos (suc x) * a + pos (suc x) * b
+    qed
+
   *-+-left-dist : ∀ x a b → x * (a + b) ≈ x * a + x * b
-  *-+-left-dist x a b = primTrustMe
+  *-+-left-dist (pos x) a b = *-+-left-dist-ℕ x a b
+  *-+-left-dist (negsuc x) a b =
+    begin
+      negsuc x * (a + b)                              ≈[ sym (neg-invol (negsuc x)) !*! R (a + b) ]
+      -1 * (pos (suc (x +ℕ zero))) * (a + b)          ≈[ cong neg (cong pos (ℕP.+-right-id (suc x))) !*! R (a + b) ]
+      -1 * (pos (suc x)) * (a + b)                    ≈[ *-assoc -1 (pos (suc x)) (a + b) ]
+      -1 * (pos (suc x) * (a + b))                    ≈[ R -1 !*! *-+-left-dist-ℕ (suc x) a b ]
+      -1 * (pos (suc x) * a + pos (suc x) * b)        ≈[ -1-left-dist (pos (suc x) * a) (pos (suc x) * b) ]
+      -1 * (pos (suc x) * a) + -1 * (pos (suc x) * b) ≈[ sym (*-assoc -1 (pos (suc x)) a) !+! sym (*-assoc -1 (pos (suc x)) b) ]
+      -1 * pos (suc x) * a + -1 * pos (suc x) * b     ≈[ R -1 !*! cong pos (cong suc (sym (ℕP.+-right-id x))) !*! R a !+!
+                                                         R -1 !*! cong pos (cong suc (sym (ℕP.+-right-id x))) !*! R b ]
+      -1 * pos (suc (x +ℕ 0)) * a + -1 * pos (suc (x +ℕ 0)) * b     ≈[ neg-invol (negsuc x) !*! R a !+! neg-invol (negsuc x) !*! R b ]
+      negsuc x * a + negsuc x * b
+    qed
+
+    where
+    -- TODO
+    -1-left-dist : ∀ x y → neg (x + y) ≈ neg x + neg y
+    -1-left-dist _ _ = primTrustMe
 
   *-+-right-dist : ∀ a b x → (a + b) * x ≈ a * x + b * x
   *-+-right-dist a b x =
@@ -250,14 +300,6 @@ module Props where
       -1 * x + 1 * x ≈[ sym (*-+-right-dist -1 1 x) ]
       0 * x          ≈[ *-left-zero x ]
       0
-    qed
-
-  neg-invol : ∀ x → neg (neg x) ≈ x
-  neg-invol x =
-    begin
-      -1 * (-1 * x) ≈[ sym (*-assoc -1 -1 x) ]
-      1 * x         ≈[ *-left-id x ]
-      x
     qed
 
   +-right-inv : ∀ x → x + neg x ≈ 0
