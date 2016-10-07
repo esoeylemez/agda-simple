@@ -234,9 +234,14 @@ module Props where
   *-+-left-dist : ∀ x a b → x * (a + b) ≈ x * a + x * b
   *-+-left-dist x a b = primTrustMe
 
-  -- TODO
   *-+-right-dist : ∀ a b x → (a + b) * x ≈ a * x + b * x
-  *-+-right-dist x a b = primTrustMe
+  *-+-right-dist a b x =
+    begin
+      (a + b) * x   ≈[ *-comm (a + b) x ]
+      x * (a + b)   ≈[ *-+-left-dist x a b ]
+      x * a + x * b ≈[ (*-comm x a) !+! (*-comm x b) ]
+      a * x + b * x
+    qed
 
   +-left-inv : ∀ x → neg x + x ≈ 0
   +-left-inv x =
