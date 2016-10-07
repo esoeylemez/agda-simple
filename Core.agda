@@ -43,6 +43,13 @@ A × B = Σ A (λ _ → B)
 infixr 7 _×_
 
 
+-- Tagged unions.
+
+data Either {a} {b} (A : Set a) (B : Set b) : Set (a ⊔ b) where
+  Left  : A → Either A B
+  Right : B → Either A B
+
+
 -- Equivalence relations.
 
 record Equiv {a r} (A : Set a) : Set (a ⊔ lsuc r) where
@@ -132,6 +139,13 @@ infixr 6 _and_
 
 it : ∀ {a} {A : Set a} {{_ : A}} → A
 it {{x}} = x
+
+
+-- Given two predicates, this is the predicate that requires at least
+-- one of them.
+
+_or_ : ∀ {a r1 r2} {A : Set a} → (A → Set r1) → (A → Set r2) → A → Set (r1 ⊔ r2)
+(P or Q) x = Either (P x) (Q x)
 
 
 -- Values with inline type signatures.
