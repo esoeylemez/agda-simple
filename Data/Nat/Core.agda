@@ -26,6 +26,12 @@ instance
 module Props where
   open Equiv (PropEq ℕ)
 
+  private
+    _!+!_ = cong2 _+_
+    R = λ x → refl {x = x}
+
+    infixl 6 _!+!_
+
   +-assoc : ∀ x y z → (x + y) + z ≈ x + (y + z)
   +-assoc zero y z = refl
   +-assoc (suc x) y z = cong suc (+-assoc x y z)
@@ -41,8 +47,8 @@ module Props where
   +-comm zero y = sym (+-right-id y)
   +-comm (suc x) y =
     begin
-      suc x + y || cong suc (+-comm x y) ::
-      suc y + x || sym (one-comm y x) ::
+      suc x + y ≈[ cong suc (+-comm x y) ]
+      suc y + x ≈[ sym (one-comm y x) ]
       y + suc x
     qed
 
@@ -54,8 +60,8 @@ module Props where
   +-suc-assoc : ∀ x y → x + suc y ≈ suc (x + y)
   +-suc-assoc x y =
     begin
-      x + suc y   || sym (+-assoc x 1 y) ::
-      (x + 1) + y || cong (_+ y) (+-comm x 1) ::
+      x + suc y   ≈[ sym (+-assoc x 1 y) ]
+      (x + 1) + y ≈[ +-comm x 1 !+! R y ]
       suc (x + y)
     qed
 
@@ -63,12 +69,16 @@ module Props where
   *-+-left-dist zero a b = refl
   *-+-left-dist (suc x) a b =
     begin
-      a + b + x * (a + b)       || cong ((a + b) +_) (*-+-left-dist x a b) ::
-      a + b + (x * a + x * b)   || +-assoc a b _ ::
-      a + (b + (x * a + x * b)) || cong (a +_) (sym (+-assoc b (x * a) (x * b))) ::
-      a + (b + x * a + x * b)   || cong (a +_) (cong (_+ x * b) (+-comm b _)) ::
-      a + (x * a + b + x * b)   || cong (a +_) (+-assoc (x * a) _ _) ::
-      a + (x * a + (b + x * b)) || sym (+-assoc a _ _) ::
+      a + b + x * (a + b)       ≈[ R (a + b) !+! *-+-left-dist x a b ]
+      a + b + (x * a + x * b)   ≈[ +-assoc a b _ ]
+      a + (b + (x * a + x * b)) ≈[
+      cong (a +_) $
+        b + (x * a + x * b) ≈[ sym (+-assoc b (x * a) (x * b)) ]
+        b + x * a + x * b   ≈[ +-comm b _ !+! R (x * b) ]
+        x * a + b + x * b   ≈[ +-assoc (x * a) _ _ ]
+        x * a + (b + x * b)
+      qed ]
+      a + (x * a + (b + x * b)) ≈[ sym (+-assoc a _ _) ]
       a + x * a + (b + x * b)
     qed
 
@@ -76,8 +86,8 @@ module Props where
   *-+-right-dist zero b x = refl
   *-+-right-dist (suc a) b x =
     begin
-      x + (a + b) * x     || cong (_+_ x) (*-+-right-dist a b x) ::
-      x + (a * x + b * x) || sym (+-assoc x (a * x) (b * x)) ::
+      x + (a + b) * x     ≈[ R x !+! *-+-right-dist a b x ]
+      x + (a * x + b * x) ≈[ sym (+-assoc x (a * x) (b * x)) ]
       (x + a * x) + b * x
     qed
 
@@ -85,8 +95,8 @@ module Props where
   *-assoc zero y z = refl
   *-assoc (suc x) y z =
     begin
-      (y + x * y) * z     || *-+-right-dist y (x * y) z ::
-      y * z + (x * y) * z || cong (y * z +_) (*-assoc x y z) ::
+      (y + x * y) * z     ≈[ *-+-right-dist y (x * y) z ]
+      y * z + (x * y) * z ≈[ R (y * z) !+! *-assoc x y z ]
       y * z + x * (y * z)
     qed
 
@@ -107,13 +117,13 @@ module Props where
   *-comm (suc x) (suc y) =
     cong suc $
     begin
-      y + x * suc y       || cong (y +_) (*-+-left-dist x 1 y) ::
-      y + (x * 1 + x * y) || cong (λ a → y + (a + x * y)) (*-right-id x) ::
-      y + (x + x * y)     || sym (+-assoc y x (x * y)) ::
-      y + x + x * y       || cong2 _+_ (+-comm y x) (*-comm x y) ::
-      x + y + y * x       || +-assoc x y (y * x) ::
-      x + (y + y * x)     || cong (λ a → x + (a + y * x)) (sym (*-right-id y)) ::
-      x + (y * 1 + y * x) || cong (x +_) (sym (*-+-left-dist y 1 x)) ::
+      y + x * suc y       ≈[ R y !+! (*-+-left-dist x 1 y) ]
+      y + (x * 1 + x * y) ≈[ R y !+! (*-right-id x !+! R (x * y)) ]
+      y + (x + x * y)     ≈[ sym (+-assoc y x (x * y)) ]
+      y + x + x * y       ≈[ +-comm y x !+! *-comm x y ]
+      x + y + y * x       ≈[ +-assoc x y (y * x) ]
+      x + (y + y * x)     ≈[ R x !+! (sym (*-right-id y) !+! R (y * x)) ]
+      x + (y * 1 + y * x) ≈[ R x !+! sym (*-+-left-dist y 1 x) ]
       x + y * suc x
     qed
 

@@ -58,17 +58,17 @@ record Equiv {a r} (A : Set a) : Set (a ⊔ lsuc r) where
   begin_ : ∀ {x y} → x ≈ y → x ≈ y
   begin_ p = p
 
-  _||_::_ : ∀ x {y z} → x ≈ y → y ≈ z → x ≈ z
-  _ || x≈y :: y≈z = trans x≈y y≈z
+  _≈[_]_ : ∀ x {y z} → x ≈ y → y ≈ z → x ≈ z
+  _ ≈[ x≈y ] y≈z = trans x≈y y≈z
 
-  _|:_ : ∀ x {y} → x ≈ y → x ≈ y
-  _ |: p = p
+  _≈[]_ : ∀ x {y} → x ≈ y → x ≈ y
+  _ ≈[] p = p
 
   _qed : ∀ (x : A) → x ≈ x
   _qed _ = refl
 
   infix  1 begin_
-  infixr 2 _||_::_ _|:_
+  infixr 2 _≈[_]_ _≈[]_
   infix  3 _qed
 
 PropEq : ∀ {a} → (A : Set a) → Equiv A
