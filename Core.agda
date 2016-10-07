@@ -185,6 +185,12 @@ it : ∀ {a} {A : Set a} {{_ : A}} → A
 it {{x}} = x
 
 
+-- Not.
+
+not : ∀ {a} → Set a → Set a
+not A = A → ⊥
+
+
 -- Given two predicates, this is the predicate that requires at least
 -- one of them.
 
