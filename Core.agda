@@ -119,6 +119,50 @@ cong2 :
 cong2 _ ≡-refl ≡-refl = ≡-refl
 
 
+-- Partial orders.
+
+record PartialOrder {a re rl} (A : Set a) : Set (a ⊔ lsuc (re ⊔ rl)) where
+  field Eq : Equiv {r = re} A
+  module ≈ = Equiv Eq
+  open ≈ public using (_≈_)
+
+  field
+    _≤_     : A → A → Set rl
+    antisym : ∀ {x y} → x ≤ y → y ≤ x → x ≈ y
+    refl'   : ∀ {x y} → x ≈ y → x ≤ y
+    trans   : ∀ {x y z} → x ≤ y → y ≤ z → x ≤ z
+
+  refl : ∀ {x} → x ≤ x
+  refl = refl' ≈.refl
+
+  -- Helper functions for transitivity reasoning.
+  begin_ : ∀ {x y} → x ≤ y → x ≤ y
+  begin_ p = p
+
+  _≤[_]_ : ∀ x {y z} → x ≤ y → y ≤ z → x ≤ z
+  _ ≤[ x≤y ] y≤z = trans x≤y y≤z
+
+  _≤[]_ : ∀ x {y} → x ≤ y → x ≤ y
+  _ ≤[] p = p
+
+  _qed : ∀ (x : A) → x ≤ x
+  _qed _ = refl
+
+  infix  1 begin_
+  infixr 2 _≤[_]_ _≤[]_
+  infix  3 _qed
+
+
+-- Total orders.
+
+record TotalOrder {a re rl} (A : Set a) : Set (a ⊔ lsuc (re ⊔ rl)) where
+  field partialOrder : PartialOrder {a} {re} {rl} A
+  open PartialOrder partialOrder public
+
+  field
+    total : ∀ {x y} → Either (x ≤ y) (y ≤ x)
+
+
 -- Low-priority function application.
 
 _$_ : ∀ {a} {A : Set a} → A → A
