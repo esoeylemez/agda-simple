@@ -2,7 +2,7 @@
 -- License:    BSD3
 -- Maintainer: Ertugrul Söylemez <esz@posteo.de>
 
-module Algebra.Semigroupoid where
+module Algebra.Category.Semigroupoid where
 
 open import Core
 
@@ -40,7 +40,7 @@ record Semigroupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
 
 
 -- A semifunctor is a composition-preserving mapping from a semigroupoid
--- to to another.
+-- to another.
 
 record Semifunctor
        {cc ch cr dc dh dr}

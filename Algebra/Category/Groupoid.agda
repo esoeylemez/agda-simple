@@ -2,9 +2,9 @@
 -- License:    BSD3
 -- Maintainer: Ertugrul Söylemez <esz@posteo.de>
 
-module Algebra.Groupoid where
+module Algebra.Category.Groupoid where
 
-open import Algebra.Category
+open import Algebra.Category.Category
 open import Core
 
 
@@ -23,11 +23,11 @@ record Groupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   inv-unique : ∀ {A B} {inv-f' : Hom A B} {f} → f ∘ inv-f' ≈ id → inv-f' ≈ inv f
   inv-unique {inv-f' = inv-f'} {f = f} right-inv' =
     begin
-      inv-f'               || sym (left-id _) ::
-      id ∘ inv-f'          || ∘-cong (sym (left-inv _)) refl ::
-      (inv f ∘ f) ∘ inv-f' || assoc _ _ _ ::
-      inv f ∘ (f ∘ inv-f') || ∘-cong refl right-inv' ::
-      inv f ∘ id           || right-id _ ::
+      inv-f'               ≈[ sym (left-id _) ]
+      id ∘ inv-f'          ≈[ ∘-cong (sym (left-inv _)) refl ]
+      (inv f ∘ f) ∘ inv-f' ≈[ assoc _ _ _ ]
+      inv f ∘ (f ∘ inv-f') ≈[ ∘-cong refl right-inv' ]
+      inv f ∘ id           ≈[ right-id _ ]
       inv f
     qed
 
@@ -35,11 +35,11 @@ record Groupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   inv-invol : ∀ {A B} {f : Hom A B} → inv (inv f) ≈ f
   inv-invol {f = f} =
     begin
-      inv (inv f)               || sym (right-id _) ::
-      inv (inv f) ∘ id          || ∘-cong refl (sym (left-inv _)) ::
-      inv (inv f) ∘ (inv f ∘ f) || sym (assoc _ _ _) ::
-      (inv (inv f) ∘ inv f) ∘ f || ∘-cong (left-inv _) refl ::
-      id ∘ f                    || left-id _ ::
+      inv (inv f)               ≈[ sym (right-id _) ]
+      inv (inv f) ∘ id          ≈[ ∘-cong refl (sym (left-inv _)) ]
+      inv (inv f) ∘ (inv f ∘ f) ≈[ sym (assoc _ _ _) ]
+      (inv (inv f) ∘ inv f) ∘ f ≈[ ∘-cong (left-inv _) refl ]
+      id ∘ f                    ≈[ left-id _ ]
       f
     qed
 
@@ -47,7 +47,7 @@ record Groupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   right-inv : ∀ {A B} {f : Hom A B} → f ∘ inv f ≈ id
   right-inv {f = f} =
     begin
-      f ∘ inv f           || ∘-cong (sym inv-invol) refl ::
-      inv (inv f) ∘ inv f || left-inv _ ::
+      f ∘ inv f           ≈[ ∘-cong (sym inv-invol) refl ]
+      inv (inv f) ∘ inv f ≈[ left-inv _ ]
       id
     qed

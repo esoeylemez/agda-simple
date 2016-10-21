@@ -2,9 +2,9 @@
 -- License:    BSD3
 -- Maintainer: Ertugrul Söylemez <esz@posteo.de>
 
-module Algebra.Category where
+module Algebra.Category.Category where
 
-open import Algebra.Semigroupoid
+open import Algebra.Category.Semigroupoid
 open import Core
 
 
@@ -27,8 +27,8 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
     → id' ≈ id
   id-unique {id' = id'} left-id' =
     begin
-      id'      || sym (right-id _) ::
-      id' ∘ id || left-id' ::
+      id'      ≈[ sym (right-id _) ]
+      id' ∘ id ≈[ left-id' ]
       id
     qed
 
