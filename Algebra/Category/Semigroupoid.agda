@@ -43,10 +43,10 @@ record Semigroupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
 -- to another.
 
 record Semifunctor
-       {cc ch cr dc dh dr}
-       (C : Semigroupoid {cc} {ch} {cr})
-       (D : Semigroupoid {dc} {dh} {dr})
-       : Set (cc ⊔ ch ⊔ cr ⊔ dc ⊔ dh ⊔ dr)
+           {cc ch cr dc dh dr}
+           (C : Semigroupoid {cc} {ch} {cr})
+           (D : Semigroupoid {dc} {dh} {dr})
+           : Set (cc ⊔ ch ⊔ cr ⊔ dc ⊔ dh ⊔ dr)
        where
 
   private

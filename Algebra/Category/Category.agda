@@ -36,10 +36,12 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
 -- A functor is a structure-preserving mapping from one category to
 -- another.
 
-record Functor {cc ch cr dc dh dr}
-               (C : Category {cc} {ch} {cr})
-               (D : Category {dc} {dh} {dr})
-               : Set (cc ⊔ ch ⊔ cr ⊔ dc ⊔ dh ⊔ dr) where
+record Functor
+           {cc ch cr dc dh dr}
+           (C : Category {cc} {ch} {cr})
+           (D : Category {dc} {dh} {dr})
+           : Set (cc ⊔ ch ⊔ cr ⊔ dc ⊔ dh ⊔ dr)
+       where
 
   private
     module C = Category C
