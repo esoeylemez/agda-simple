@@ -32,6 +32,44 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
       id
     qed
 
+  -- Isomorphisms
+  record Iso {A B} (f : Hom A B) : Set (h ⊔ r) where
+    field
+      inv : Hom B A
+      left-inv  : inv ∘ f ≈ id
+      right-inv : f ∘ inv ≈ id
+
+    -- Inverses are unique for each morphism.
+    inv-unique : ∀ g → f ∘ g ≈ id → g ≈ inv
+    inv-unique g right-inv' =
+      begin
+        g              ≈[ sym (left-id g) ]
+        id ∘ g         ≈[ ∘-cong (sym left-inv) refl ]
+        (inv ∘ f) ∘ g  ≈[ assoc inv f g ]
+        inv ∘ (f ∘ g)  ≈[ ∘-cong refl right-inv' ]
+        inv ∘ id       ≈[ right-id inv ]
+        inv
+      qed
+
+    inv-iso : Iso inv
+    inv-iso =
+      record {
+        inv = f;
+        left-inv = right-inv;
+        right-inv = left-inv
+      }
+
+    inv-invol : ∀ g h → g ∘ f ≈ id → h ∘ g ≈ id → f ≈ h
+    inv-invol g h g-left-inv h-left-inv =
+      begin
+        f            ≈[ sym (left-id f) ]
+        id ∘ f       ≈[ ∘-cong (sym h-left-inv) refl ]
+        (h ∘ g) ∘ f  ≈[ assoc h g f ]
+        h ∘ (g ∘ f)  ≈[ ∘-cong refl g-left-inv ]
+        h ∘ id       ≈[ right-id h ]
+        h
+      qed
+
 
 -- A functor is a structure-preserving mapping from one category to
 -- another.
@@ -52,6 +90,29 @@ record Functor
 
   field
     id-preserving : ∀ {A} → map (C.id {A}) D.≈ D.id {F A}
+
+  Iso-preserving : ∀ {A B} {f : C.Hom A B} → C.Iso f → D.Iso (map f)
+  Iso-preserving {f = f} p =
+    record {
+      inv = map inv;
+      left-inv =
+        D.begin
+          map inv D.∘ map f  D.≈[ D.sym (∘-preserving inv f) ]
+          map (inv C.∘ f)    D.≈[ map-cong left-inv ]
+          map C.id           D.≈[ id-preserving ]
+          D.id
+        D.qed;
+      right-inv =
+        D.begin
+          map f D.∘ map inv  D.≈[ D.sym (∘-preserving f inv) ]
+          map (f C.∘ inv)    D.≈[ map-cong right-inv ]
+          map C.id           D.≈[ id-preserving ]
+          D.id
+        D.qed
+    }
+
+    where
+    open Category.Iso p
 
 
 -- Category of types and functions.
