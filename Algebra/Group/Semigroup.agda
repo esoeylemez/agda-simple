@@ -2,20 +2,19 @@
 -- License:    BSD3
 -- Maintainer: Ertugrul Söylemez <esz@posteo.de>
 
-module Algebra.Semigroup where
+module Algebra.Group.Semigroup where
 
 open import Algebra.Category
-open import Algebra.Semigroupoid
 open import Core
 
 
 -- A semigroup is an associative binary function.
 
 record SemigroupOver {a r} (A : Set a) (Eq : Equiv {r = r} A) : Set (a ⊔ r) where
-  open Equiv Eq public
+  open Equiv Eq
 
   field
-    _⋄_ : A → A → A
+    _⋄_    : A → A → A
     ⋄-cong : ∀ {x1 x2 y1 y2} → x1 ≈ x2 → y1 ≈ y2 → x1 ⋄ y1 ≈ x2 ⋄ y2
     assoc  : ∀ x y z → (x ⋄ y) ⋄ z ≈ x ⋄ (y ⋄ z)
 
@@ -30,14 +29,17 @@ record SemigroupOver {a r} (A : Set a) (Eq : Equiv {r = r} A) : Set (a ⊔ r) wh
       assoc = assoc
     }
 
-  infixr 6 _⋄_
+  open Semigroupoid semigroupoid public
+    using (Epic; Monic)
+
 
 record Semigroup {a r} : Set (lsuc (a ⊔ r)) where
   field
-    A : Set a
+    A  : Set a
     Eq : Equiv {r = r} A
     semigroupOver : SemigroupOver A Eq
 
+  open Equiv Eq public
   open SemigroupOver semigroupOver public
 
 
@@ -45,10 +47,10 @@ record Semigroup {a r} : Set (lsuc (a ⊔ r)) where
 -- semigroup to another while preserving the compositional structure.
 
 record SemigroupMorphism
-       {sa sr ta tr}
-       (S : Semigroup {sa} {sr})
-       (T : Semigroup {ta} {tr})
-       : Set (sa ⊔ ta ⊔ sr ⊔ tr)
+           {sa sr ta tr}
+           (S : Semigroup {sa} {sr})
+           (T : Semigroup {ta} {tr})
+           : Set (sa ⊔ ta ⊔ sr ⊔ tr)
        where
 
   private
@@ -70,7 +72,9 @@ record SemigroupMorphism
     }
 
 
--- An equivalence relation on semigroup morphisms.
+-- An equivalence relation on semigroup morphisms that considers
+-- semigroup morphisms to be equal iff they map every element in the
+-- domain to the same element in the codomain.
 
 SemigroupMorphismEq :
   ∀ {sa sr ta tr}
@@ -120,8 +124,8 @@ Semigroups {a} {r} =
       map-cong = λ p → F.map-cong (G.map-cong p);
       ⋄-preserving = λ x y →
         U.begin
-          F.map (G.map (x S.⋄ y))             U.|| F.map-cong (G.⋄-preserving _ _) ::
-          F.map (G.map x T.⋄ G.map y)         U.|| F.⋄-preserving _ _ ::
+          F.map (G.map (x S.⋄ y))             U.≈[ F.map-cong (G.⋄-preserving _ _) ]
+          F.map (G.map x T.⋄ G.map y)         U.≈[ F.⋄-preserving _ _ ]
           F.map (G.map x) U.⋄ F.map (G.map y)
         U.qed
     }
@@ -141,8 +145,8 @@ Semigroups {a} {r} =
     → F1 ≈ F2 → G1 ≈ G2 → F1 ∘ G1 ≈ F2 ∘ G2
   ∘-cong {U = U} {F1} {F2} {G1} {G2} F1≈F2 G1≈G2 x =
     U.begin
-      F1.map (G1.map x) U.|| F1.map-cong (G1≈G2 _) ::
-      F1.map (G2.map x) U.|| F1≈F2 _ ::
+      F1.map (G1.map x) U.≈[ F1.map-cong (G1≈G2 _) ]
+      F1.map (G2.map x) U.≈[ F1≈F2 _ ]
       F2.map (G2.map x)
     U.qed
 

@@ -2,18 +2,17 @@
 -- License:    BSD3
 -- Maintainer: Ertugrul Söylemez <esz@posteo.de>
 
-module Algebra.Monoid where
+module Algebra.Group.Monoid where
 
 open import Algebra.Category
-open import Algebra.Semigroup
+open import Algebra.Group.Semigroup
 open import Core
 
 
 -- A monoid is a semigroup with an identity element.
 
-record MonoidOver {a r} (A : Set a) (Eq : Equiv {r = r} A) : Set (a ⊔ r) where
-  field semigroupOver : SemigroupOver A Eq
-  open SemigroupOver semigroupOver public
+record IsMonoid {a r} (S : Semigroup {a} {r}) : Set (a ⊔ r) where
+  open Semigroup S
 
   field
     id : A
@@ -30,33 +29,27 @@ record MonoidOver {a r} (A : Set a) (Eq : Equiv {r = r} A) : Set (a ⊔ r) where
     }
 
   open Category category public
-    using (id-unique)
+    using (id-unique; Iso)
+
 
 record Monoid {a r} : Set (lsuc (a ⊔ r)) where
   field
-    A : Set a
-    Eq : Equiv {r = r} A
-    monoidOver : MonoidOver A Eq
+    semigroup : Semigroup {a} {r}
+    isMonoid  : IsMonoid semigroup
 
-  open MonoidOver monoidOver public
-
-  semigroup : Semigroup
-  semigroup =
-    record {
-      A = A;
-      Eq = Eq;
-      semigroupOver = semigroupOver
-    }
+  open Semigroup semigroup public
+  open IsMonoid isMonoid public
 
 
--- A monoid morphism is a semigroup morphism that also preserves
--- identities.
+-- A monoid morphism is a function that maps the elements of one monoid
+-- to another while preserving the compositional structure as well as
+-- identity.
 
 record MonoidMorphism
-       {sa sr ta tr}
-       (M : Monoid {sa} {sr})
-       (N : Monoid {ta} {tr})
-       : Set (sa ⊔ ta ⊔ sr ⊔ tr)
+           {ma mr na nr}
+           (M : Monoid {ma} {mr})
+           (N : Monoid {na} {nr})
+           : Set (ma ⊔ mr ⊔ na ⊔ nr)
        where
 
   private
@@ -76,8 +69,13 @@ record MonoidMorphism
       id-preserving = id-preserving
     }
 
+  open Functor functor public
+    using (Iso-preserving)
 
--- An equivalence relation on monoid morphisms.
+
+-- An equivalence relation on monoid morphisms that considers monoid
+-- morphisms to be equal iff they map every element in the domain to the
+-- same element in the codomain.
 
 MonoidMorphismEq :
   ∀ {ma mr na nr}
