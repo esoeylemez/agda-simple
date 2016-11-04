@@ -183,3 +183,27 @@ Semigroups {a} {r} =
   left-right-id {T = T} _ _ = T.refl
     where
     module T = Semigroup T
+
+
+-- Product semigroups
+
+_×S_ : ∀ {sa sr ta tr} → Semigroup {sa} {sr} → Semigroup {ta} {tr} → Semigroup
+S ×S T =
+  record {
+    A = S.A × T.A;
+    Eq = record {
+      _≈_ = λ { (x1 , x2) (y1 , y2) → (x1 S.≈ y1) × (x2 T.≈ y2) };
+      refl = S.refl , T.refl;
+      sym = λ { (p1 , p2) → S.sym p1 , T.sym p2 };
+      trans = λ { (p1 , p2) (q1 , q2) → S.trans p1 q1 , T.trans p2 q2 }
+    };
+    semigroupOver = record {
+      _⋄_ = λ { (x1 , x2) (y1 , y2) → (x1 S.⋄ y1) , (x2 T.⋄ y2) };
+      ⋄-cong = λ { (p1 , p2) (q1 , q2) → S.⋄-cong p1 q1 , T.⋄-cong p2 q2 };
+      assoc = λ { (x1 , x2) (y1 , y2) (z1 , z2) → S.assoc x1 y1 z1 , T.assoc x2 y2 z2 }
+    }
+  }
+
+  where
+  module S = Semigroup S
+  module T = Semigroup T
