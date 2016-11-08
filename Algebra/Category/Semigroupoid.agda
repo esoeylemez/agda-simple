@@ -38,6 +38,14 @@ record Semigroupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   Monic : ∀ {B C} → (f : Hom B C) → Set _
   Monic f = ∀ {A} {g1 g2 : Hom A _} → f ∘ g1 ≈ f ∘ g2 → g1 ≈ g2
 
+  Unique : ∀ {A B} → (f : Hom A B) → Set _
+  Unique f = ∀ g → f ≈ g
+
+  Product : ∀ A B AB → (fst : Hom AB A) (snd : Hom AB B) → Set _
+  Product A B AB fst snd =
+    ∀ AB' (fst' : Hom AB' A) (snd' : Hom AB' B) →
+    ∃ (λ (u : Hom AB' AB) → Unique u × (fst ∘ u ≈ fst') × (snd ∘ u ≈ snd'))
+
 
 -- A semifunctor is a composition-preserving mapping from a semigroupoid
 -- to another.
