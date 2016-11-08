@@ -133,3 +133,12 @@ module Props where
 
   suc-inj : ∀ {x y} → suc x ≈ suc y → x ≈ y
   suc-inj ≡-refl = refl
+
+  sum-mult : ∀ {x1 x2 y} → x1 multiple-of y → x2 multiple-of y → (x1 + x2) multiple-of y
+  sum-mult {x1} {x2} {y} (k1 , p1) (k2 , p2) =
+    k1 + k2
+    because:
+      (k1 + k2) * y   ≈[ *-+-right-dist k1 k2 y ]
+      k1 * y + k2 * y ≈[ p1 !+! p2 ]
+      x1 + x2
+    qed
