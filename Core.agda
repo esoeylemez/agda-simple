@@ -33,9 +33,16 @@ record Σ {a b} (A : Set a) (B : A → Set b) : Set (a ⊔ b) where
 open Σ public
 
 infixr 4 _,_
+infixr 0 _because_ _because:_
 
 ∃ : ∀ {a b} {A : Set a} (B : A → Set b) → Set (a ⊔ b)
 ∃ = Σ _
+
+_because_ : ∀ {a b} {A : Set a} {B : A → Set b} → (x : A) → B x → Σ A B
+_because_ = _,_
+
+_because:_ : ∀ {a b} {A : Set a} {B : A → Set b} → (x : A) → B x → Σ A B
+_because:_ = _,_
 
 _×_ : ∀ {a b} (A : Set a) (B : Set b) → Set (a ⊔ b)
 A × B = Σ A (λ _ → B)
