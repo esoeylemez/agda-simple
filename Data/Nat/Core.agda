@@ -23,6 +23,10 @@ instance
 ℕ,≡ = PropEq ℕ
 
 
+_multiple-of_ : ℕ → ℕ → Set
+x multiple-of y = ∃ (λ k → k * y ≡ x)
+
+
 module Props where
   open Equiv (PropEq ℕ)
 
