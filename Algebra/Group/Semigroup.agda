@@ -43,6 +43,15 @@ record Semigroup {a r} : Set (lsuc (a ⊔ r)) where
   open SemigroupOver semigroupOver public
 
 
+-- Commutative semigroups.
+
+record IsComm {a r} (S : Semigroup {a} {r}) : Set (a ⊔ r) where
+  open Semigroup S
+
+  field
+    comm : ∀ x y → x ⋄ y ≈ y ⋄ x
+
+
 -- A semigroup morphism is a function that maps the elements of one
 -- semigroup to another while preserving the compositional structure.
 
