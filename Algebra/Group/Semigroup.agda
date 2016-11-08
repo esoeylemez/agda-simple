@@ -193,6 +193,8 @@ Semigroups {a} {r} =
     where
     module T = Semigroup T
 
+module Semigroups {a r} = Category (Semigroups {a} {r})
+
 
 -- Product semigroups
 
