@@ -198,23 +198,83 @@ module Semigroups {a r} = Category (Semigroups {a} {r})
 
 -- Product semigroups
 
-_×S_ : ∀ {sa sr ta tr} → Semigroup {sa} {sr} → Semigroup {ta} {tr} → Semigroup
+_×S_ : ∀ {a r} (S T : Semigroup {a} {r}) → Semigroups.Product S T
 S ×S T =
   record {
-    A = S.A × T.A;
-    Eq = record {
-      _≈_ = λ { (x1 , x2) (y1 , y2) → (x1 S.≈ y1) × (x2 T.≈ y2) };
-      refl = S.refl , T.refl;
-      sym = λ { (p1 , p2) → S.sym p1 , T.sym p2 };
-      trans = λ { (p1 , p2) (q1 , q2) → S.trans p1 q1 , T.trans p2 q2 }
-    };
-    semigroupOver = record {
-      _⋄_ = λ { (x1 , x2) (y1 , y2) → (x1 S.⋄ y1) , (x2 T.⋄ y2) };
-      ⋄-cong = λ { (p1 , p2) (q1 , q2) → S.⋄-cong p1 q1 , T.⋄-cong p2 q2 };
-      assoc = λ { (x1 , x2) (y1 , y2) (z1 , z2) → S.assoc x1 y1 z1 , T.assoc x2 y2 z2 }
-    }
+    A×B = S×T;
+    cfst = cfst;
+    csnd = csnd;
+    isProduct = isProduct
   }
 
   where
   module S = Semigroup S
   module T = Semigroup T
+
+  S×T : Semigroup
+  S×T =
+    record {
+      A = S.A × T.A;
+      Eq = record {
+        _≈_ = λ { (x1 , x2) (y1 , y2) → (x1 S.≈ y1) × (x2 T.≈ y2) };
+        refl = S.refl , T.refl;
+        sym = λ { (p1 , p2) → S.sym p1 , T.sym p2 };
+        trans = λ { (p1 , p2) (q1 , q2) → S.trans p1 q1 , T.trans p2 q2 }
+      };
+      semigroupOver = record {
+        _⋄_ = λ { (x1 , x2) (y1 , y2) → (x1 S.⋄ y1) , (x2 T.⋄ y2) };
+        ⋄-cong = λ { (p1 , p2) (q1 , q2) → S.⋄-cong p1 q1 , T.⋄-cong p2 q2 };
+        assoc = λ { (x1 , x2) (y1 , y2) (z1 , z2) → S.assoc x1 y1 z1 , T.assoc x2 y2 z2 }
+      }
+    }
+
+  module S×T = Semigroup S×T
+
+  cfst : SemigroupMorphism S×T S
+  cfst =
+    record {
+      map = fst;
+      map-cong = fst;
+      ⋄-preserving = λ _ _ → S.refl
+    }
+
+  module cfst = SemigroupMorphism cfst
+
+  csnd : SemigroupMorphism S×T T
+  csnd =
+    record {
+      map = snd;
+      map-cong = snd;
+      ⋄-preserving = λ _ _ → T.refl
+    }
+
+  module csnd = SemigroupMorphism csnd
+
+  isProduct : Semigroups.IsProduct S T S×T cfst csnd
+  isProduct S×T' cfst' csnd' =
+    u because:
+      unique ,
+      (λ _ → S.refl) ,
+      (λ _ → T.refl)
+
+    where
+    module S×T'  = Semigroup S×T'
+    module cfst' = SemigroupMorphism cfst'
+    module csnd' = SemigroupMorphism csnd'
+
+    u : SemigroupMorphism S×T' S×T
+    u =
+      record {
+        map = λ xy' → cfst'.map xy' , csnd'.map xy';
+        map-cong = λ x≈y → cfst'.map-cong x≈y , csnd'.map-cong x≈y;
+        ⋄-preserving = λ x y → cfst'.⋄-preserving x y , csnd'.⋄-preserving x y
+      }
+
+    module u = SemigroupMorphism u
+
+    unique : Semigroups.Unique u
+    unique g xy' =
+      {!!} , {!!}
+
+      where
+      module g = SemigroupMorphism g
