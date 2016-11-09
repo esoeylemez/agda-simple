@@ -41,10 +41,17 @@ record Semigroupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
   Unique : ∀ {A B} → (f : Hom A B) → Set _
   Unique f = ∀ g → f ≈ g
 
-  Product : ∀ A B AB → (fst : Hom AB A) (snd : Hom AB B) → Set _
-  Product A B AB fst snd =
+  IsProduct : ∀ A B AB → (fst : Hom AB A) (snd : Hom AB B) → Set _
+  IsProduct A B AB fst snd =
     ∀ AB' (fst' : Hom AB' A) (snd' : Hom AB' B) →
     ∃ (λ (u : Hom AB' AB) → Unique u × (fst ∘ u ≈ fst') × (snd ∘ u ≈ snd'))
+
+  record Product A B : Set (c ⊔ h ⊔ r) where
+    field
+      A×B  : Ob
+      cfst : Hom A×B A
+      csnd : Hom A×B B
+      isProduct : IsProduct A B A×B cfst csnd
 
 
 -- A semifunctor is a composition-preserving mapping from a semigroupoid
