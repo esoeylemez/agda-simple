@@ -167,7 +167,7 @@ record TotalOrder {a re rl} (A : Set a) : Set (a ⊔ lsuc (re ⊔ rl)) where
   open PartialOrder partialOrder public
 
   field
-    total : ∀ {x y} → Either (x ≤ y) (y ≤ x)
+    total : ∀ x y → Either (x ≤ y) (y ≤ x)
 
 
 -- Low-priority function application.
