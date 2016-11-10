@@ -30,6 +30,8 @@ open import Data.Nat.Core public
     }
   }
 
+module ℕ,+ = Monoid ℕ,+
+
 
 ℕ,* : Monoid
 ℕ,* =
@@ -49,3 +51,5 @@ open import Data.Nat.Core public
       right-id = Props.*-right-id
     }
   }
+
+module ℕ,* = Monoid ℕ,*
