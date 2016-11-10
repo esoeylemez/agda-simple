@@ -150,3 +150,19 @@ Sets {r} =
     P.trans (cong f1 (g1≈g2 _)) (f1≈f2 _)
 
 module Sets {r} = Category (Sets {r})
+
+
+injective→monic :
+  ∀ {a} {A B : Set a}
+    {f : A → B}
+  → (∀ {x y} → f x ≡ f y → x ≡ y)
+  → Sets.Monic f
+injective→monic inj p x = inj (p x)
+
+
+monic→injective :
+  ∀ {a} {A B : Set a}
+    {f : A → B}
+  → Sets.Monic f
+  → ∀ {x y} → f x ≡ f y → x ≡ y
+monic→injective monic p = monic Sets.id p
