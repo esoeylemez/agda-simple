@@ -134,7 +134,7 @@ record PartialOrder {a re rl} (A : Set a) : Set (a ⊔ lsuc (re ⊔ rl)) where
   open ≈ public using (_≈_)
 
   field
-    _≤_     : A → A → Set rl
+    _≤_     : (x : A) → (y : A) → Set rl
     antisym : ∀ {x y} → x ≤ y → y ≤ x → x ≈ y
     refl'   : ∀ {x y} → x ≈ y → x ≤ y
     trans   : ∀ {x y z} → x ≤ y → y ≤ z → x ≤ z
