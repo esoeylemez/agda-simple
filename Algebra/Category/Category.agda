@@ -117,8 +117,8 @@ record Functor
 
 -- Category of types and functions.
 
-SetC : ∀ {r} → Category
-SetC {r} =
+Sets : ∀ {r} → Category
+Sets {r} =
   record {
     semigroupoid = record {
       Ob = Set r;
@@ -149,4 +149,4 @@ SetC {r} =
   ∘-cong {f1 = f1} f1≈f2 g1≈g2 x =
     P.trans (cong f1 (g1≈g2 _)) (f1≈f2 _)
 
-module SetC {r} = Category (SetC {r})
+module Sets {r} = Category (Sets {r})

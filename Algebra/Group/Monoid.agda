@@ -122,8 +122,8 @@ Monoids {a} {r} =
   id {M} =
     record {
       semigroupMorphism = record {
-        map = SetC.id;
-        map-cong = SetC.id;
+        map = Sets.id;
+        map-cong = Sets.id;
         ⋄-preserving = λ x y → M.refl
       };
       id-preserving = M.refl
