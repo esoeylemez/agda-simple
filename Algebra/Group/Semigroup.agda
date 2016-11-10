@@ -129,7 +129,7 @@ Semigroups {a} {r} =
   _∘_ : ∀ {S T U} → SemigroupMorphism T U → SemigroupMorphism S T → SemigroupMorphism S U
   _∘_ {S} {T} {U} F G =
     record {
-      map = F.map SetC.∘ G.map;
+      map = F.map Sets.∘ G.map;
       map-cong = λ p → F.map-cong (G.map-cong p);
       ⋄-preserving = λ x y →
         U.begin

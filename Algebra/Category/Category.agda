@@ -117,8 +117,8 @@ record Functor
 
 -- Category of types and functions.
 
-SetC : ∀ {r} → Category
-SetC {r} =
+Sets : ∀ {r} → Category
+Sets {r} =
   record {
     semigroupoid = record {
       Ob = Set r;
@@ -149,4 +149,38 @@ SetC {r} =
   ∘-cong {f1 = f1} f1≈f2 g1≈g2 x =
     P.trans (cong f1 (g1≈g2 _)) (f1≈f2 _)
 
-module SetC {r} = Category (SetC {r})
+module Sets {r} = Category (Sets {r})
+
+
+injective→monic :
+  ∀ {a} {A B : Set a}
+    {f : A → B}
+  → (∀ {x y} → f x ≡ f y → x ≡ y)
+  → Sets.Monic f
+injective→monic inj p x = inj (p x)
+
+
+monic→injective :
+  ∀ {a} {A B : Set a}
+    {f : A → B}
+  → Sets.Monic f
+  → ∀ {x y} → f x ≡ f y → x ≡ y
+monic→injective monic p = monic Sets.id p
+
+
+surjective→epic :
+  ∀ {a} {A B : Set a}
+    {f : A → B}
+  → (∀ y → ∃ (λ x → f x ≡ y))
+  → Sets.Epic f
+surjective→epic {f = f} surj {g1 = g1} {g2} p y with surj y
+surjective→epic {f = f} surj {g1 = g1} {g2} p y | x , q =
+  begin
+    g1 y      ≈[ cong g1 (sym q) ]
+    g1 (f x)  ≈[ p x ]
+    g2 (f x)  ≈[ cong g2 q ]
+    g2 y
+  qed
+
+  where
+  open module MyEquiv {A} = Equiv (PropEq A)
