@@ -93,3 +93,5 @@ module ℕ,* = Monoid ℕ,*
   total (suc x) (suc y) with total x y
   total (suc x) (suc y) | Left p = Left (s≤s p)
   total (suc x) (suc y) | Right p = Right (s≤s p)
+
+module ℕ,≤ = TotalOrder ℕ,≤
