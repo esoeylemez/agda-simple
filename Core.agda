@@ -139,6 +139,8 @@ record PartialOrder {a re rl} (A : Set a) : Set (a ⊔ lsuc (re ⊔ rl)) where
     refl'   : ∀ {x y} → x ≈ y → x ≤ y
     trans   : ∀ {x y z} → x ≤ y → y ≤ z → x ≤ z
 
+  infix 4 _≤_
+
   refl : ∀ {x} → x ≤ x
   refl = refl' ≈.refl
 
