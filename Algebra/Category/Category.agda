@@ -70,6 +70,79 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
         h
       qed
 
+  record _≃_ A B : Set (h ⊔ r) where
+    field
+      to : Hom A B
+      iso : Iso to
+
+    open Iso iso public
+
+  IsoEq : Equiv Ob
+  IsoEq =
+    record {
+      _≈_ = _≃_;
+      refl = irefl;
+      sym = isym;
+      trans = itrans
+    }
+
+    where
+    irefl : ∀ {A} → A ≃ A
+    irefl =
+      record {
+        to = id;
+        iso = record {
+          inv = id;
+          left-inv = left-id id;
+          right-inv = left-id id
+        }
+      }
+
+    isym : ∀ {A B} → A ≃ B → B ≃ A
+    isym iso =
+      record {
+        to = iso.inv;
+        iso = record {
+          inv = iso.to;
+          left-inv = iso.right-inv;
+          right-inv = iso.left-inv
+        }
+      }
+
+      where
+      module iso = _≃_ iso
+
+    itrans : ∀ {A B C} → A ≃ B → B ≃ C → A ≃ C
+    itrans iso1 iso2 =
+      record {
+        to = iso2.to ∘ iso1.to;
+        iso = record {
+          inv = iso1.inv ∘ iso2.inv;
+          left-inv =
+            begin
+              iso1.inv ∘ iso2.inv ∘ (iso2.to ∘ iso1.to)   ≈[ assoc iso1.inv iso2.inv (iso2.to ∘ iso1.to) ]
+              iso1.inv ∘ (iso2.inv ∘ (iso2.to ∘ iso1.to)) ≈[ ∘-cong refl (sym (assoc iso2.inv iso2.to iso1.to)) ]
+              iso1.inv ∘ (iso2.inv ∘ iso2.to ∘ iso1.to)   ≈[ ∘-cong refl (∘-cong iso2.left-inv refl) ]
+              iso1.inv ∘ (id ∘ iso1.to)                   ≈[ ∘-cong refl (left-id iso1.to) ]
+              iso1.inv ∘ iso1.to                          ≈[ iso1.left-inv ]
+              id
+            qed;
+          right-inv =
+            begin
+              iso2.to ∘ iso1.to ∘ (iso1.inv ∘ iso2.inv)   ≈[ assoc iso2.to iso1.to (iso1.inv ∘ iso2.inv) ]
+              iso2.to ∘ (iso1.to ∘ (iso1.inv ∘ iso2.inv)) ≈[ ∘-cong refl (sym (assoc iso1.to iso1.inv iso2.inv)) ]
+              iso2.to ∘ (iso1.to ∘ iso1.inv ∘ iso2.inv)   ≈[ ∘-cong refl (∘-cong iso1.right-inv refl) ]
+              iso2.to ∘ (id ∘ iso2.inv)                   ≈[ ∘-cong refl (left-id iso2.inv) ]
+              iso2.to ∘ iso2.inv                          ≈[ iso2.right-inv ]
+              id
+            qed
+        }
+      }
+
+      where
+      module iso1 = _≃_ iso1
+      module iso2 = _≃_ iso2
+
 
 -- A functor is a structure-preserving mapping from one category to
 -- another.
