@@ -64,6 +64,13 @@ infix 4 _≤_
 
 module ℕ,≤ = TotalOrder ℕ,≤
 
+_≤?_ : ∀ x y → Decision (x ≤ y)
+zero ≤? y = yes 0≤s
+suc x ≤? zero = no (λ ())
+suc x ≤? suc y with x ≤? y
+suc x ≤? suc y | yes p = yes (s≤s p)
+suc x ≤? suc y | no np = no (λ { (s≤s p) → np p })
+
 
 _multiple-of_ : ℕ → ℕ → Set
 x multiple-of y = ∃ (λ k → k * y ≡ x)
