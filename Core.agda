@@ -211,3 +211,10 @@ _or_ : ∀ {a r1 r2} {A : Set a} → (A → Set r1) → (A → Set r2) → A →
 
 the : ∀ {a} (A : Set a) → A → A
 the _ x = x
+
+
+-- Decidable properties.
+
+data Decision {a} (P : Set a) : Set a where
+  yes : (p : P) → Decision P
+  no  : (np : not P) → Decision P
