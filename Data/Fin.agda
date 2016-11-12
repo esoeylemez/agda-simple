@@ -5,4 +5,4 @@
 module Data.Fin where
 
 open import Data.Fin.Core public
-  using (Fin; fsuc; fzero)
+  using (Fin; Fin-Number; fsuc; fzero)
