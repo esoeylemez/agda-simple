@@ -32,6 +32,59 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
       id
     qed
 
+  BimonicEq : Equiv Ob
+  BimonicEq =
+    record {
+      _≈_ = _bimonic_;
+      refl = record {
+        to = id;
+        from = id;
+        to-monic = id-monic;
+        from-monic = id-monic
+      };
+      sym = λ m →
+        let module m = _bimonic_ m in
+        record {
+          to = m.from;
+          from = m.to;
+          to-monic = m.from-monic;
+          from-monic = m.to-monic
+        };
+      trans = λ m1 m2 →
+        let module m1 = _bimonic_ m1
+            module m2 = _bimonic_ m2 in
+        record {
+          to = m2.to ∘ m1.to;
+          from = m1.from ∘ m2.from;
+          to-monic = ∘-monic m2.to-monic m1.to-monic;
+          from-monic = ∘-monic m1.from-monic m2.from-monic
+        }
+    }
+
+    where
+    id-monic : ∀ {A} → Monic (id {A})
+    id-monic {g1 = g1} {g2} p =
+      begin
+        g1       ≈[ sym (left-id g1) ]
+        id ∘ g1  ≈[ p ]
+        id ∘ g2  ≈[ left-id g2 ]
+        g2
+      qed
+
+    ∘-monic :
+      ∀ {A B C} {f : Hom B C} {g : Hom A B}
+      → Monic f
+      → Monic g
+      → Monic (f ∘ g)
+    ∘-monic {f = f} {g} pf pg {g1 = g1} {g2} p =
+      pg $ pf $
+      begin
+        f ∘ (g ∘ g1)  ≈[ sym (assoc f g g1) ]
+        f ∘ g ∘ g1    ≈[ p ]
+        f ∘ g ∘ g2    ≈[ assoc f g g2 ]
+        f ∘ (g ∘ g2)
+      qed
+
   -- Isomorphisms
   record Iso {A B} (f : Hom A B) : Set (h ⊔ r) where
     field
