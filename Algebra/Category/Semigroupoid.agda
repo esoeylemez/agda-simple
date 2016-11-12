@@ -53,6 +53,13 @@ record Semigroupoid {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
       csnd : Hom A×B B
       isProduct : IsProduct A B A×B cfst csnd
 
+  record _bimonic_ A B : Set (c ⊔ h ⊔ r) where
+    field
+      to   : Hom A B
+      from : Hom B A
+      to-monic   : Monic to
+      from-monic : Monic from
+
 
 -- A semifunctor is a composition-preserving mapping from a semigroupoid
 -- to another.
