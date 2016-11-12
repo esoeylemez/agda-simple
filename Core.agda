@@ -101,17 +101,18 @@ PropEq A =
   trans' : ∀ {x y z} → x ≡ y → y ≡ z → x ≡ z
   trans' ≡-refl q = q
 
-PropFuncEq : ∀ {a b} (A : Set a) (B : Set b) → Equiv (A → B)
-PropFuncEq A B =
+module PropEq {a} {A : Set a} = Equiv (PropEq A)
+
+FuncEq : ∀ {a b} (A : Set a) (B : Set b) → Equiv (A → B)
+FuncEq A B =
   record {
     _≈_ = λ f g → ∀ x → f x ≡ g x;
     refl = λ _ → ≡-refl;
-    sym = λ p x → P.sym (p x);
-    trans = λ p q x → P.trans (p x) (q x)
+    sym = λ p x → PropEq.sym (p x);
+    trans = λ p q x → PropEq.trans (p x) (q x)
   }
 
-  where
-  module P = Equiv (PropEq B)
+module FuncEq {a b} {A : Set a} {B : Set b} = Equiv (FuncEq A B)
 
 cong : ∀ {a b} {A : Set a} {B : Set b} (f : A → B) {x y} → x ≡ y → f x ≡ f y
 cong _ ≡-refl = ≡-refl

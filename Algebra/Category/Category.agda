@@ -196,19 +196,18 @@ Sets {r} =
     semigroupoid = record {
       Ob = Set r;
       Hom = λ A B → A → B;
-      Eq = λ {A B} → PropFuncEq A B;
+      Eq = λ {A B} → FuncEq A B;
       _∘_ = _∘_;
       ∘-cong = ∘-cong;
-      assoc = λ _ _ _ _ → P.refl
+      assoc = λ _ _ _ _ → PropEq.refl
     };
     id = λ x → x;
-    left-id = λ _ _ → P.refl;
-    right-id = λ _ _ → P.refl
+    left-id = λ _ _ → PropEq.refl;
+    right-id = λ _ _ → PropEq.refl
   }
 
   where
-  open module MyEquiv {A} {B} = Equiv (PropFuncEq A B)
-  module P {A} = Equiv (PropEq A)
+  open module MyEquiv {A} {B} = Equiv (FuncEq A B)
 
   _∘_ : {A B C : Set r} (f : B → C) (g : A → B) → A → C
   (f ∘ g) x = f (g x)
@@ -220,7 +219,7 @@ Sets {r} =
       {f1 f2 : B → C} {g1 g2 : A → B}
     → f1 ≈ f2 → g1 ≈ g2 → f1 ∘ g1 ≈ f2 ∘ g2
   ∘-cong {f1 = f1} f1≈f2 g1≈g2 x =
-    P.trans (cong f1 (g1≈g2 _)) (f1≈f2 _)
+    PropEq.trans (cong f1 (g1≈g2 _)) (f1≈f2 _)
 
 module Sets {r} = Category (Sets {r})
 
