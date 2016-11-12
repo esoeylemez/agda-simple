@@ -6,7 +6,9 @@ module Data.Nat.Core where
 
 open import Agda.Builtin.Nat public
   renaming (Nat to ℕ)
-  using (suc; zero; _+_; _*_)
+  using (suc; zero)
+  renaming (_+_ to _+ℕ_; _*_ to _*ℕ_)
+open import Classes
 open import Core
 
 
@@ -18,9 +20,14 @@ instance
       fromNat = λ n → n
     }
 
+  ℕ-Plus : Plus ℕ
+  ℕ-Plus = record { _+_ = _+ℕ_ }
 
-ℕ,≡ : Equiv ℕ
-ℕ,≡ = PropEq ℕ
+  ℕ-Times : Times ℕ
+  ℕ-Times = record { _*_ = _*ℕ_ }
+
+  ℕ,≡ : Equiv ℕ
+  ℕ,≡ = PropEq ℕ
 
 
 data _≤_ : ℕ → ℕ → Set where
@@ -80,6 +87,7 @@ module Props where
   open Equiv (PropEq ℕ)
 
   private
+    _!+!_ : ∀ {x1 x2 y1 y2 : ℕ} → x1 ≡ x2 → y1 ≡ y2 → x1 + y1 ≡ x2 + y2
     _!+!_ = cong2 _+_
     R = λ x → refl {x = x}
 

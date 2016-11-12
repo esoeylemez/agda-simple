@@ -8,12 +8,11 @@ open import Agda.Builtin.Int public
   renaming (Int to ℤ)
   using (pos; negsuc)
 open import Agda.Builtin.TrustMe
+open import Classes
 open import Core
 open import Data.Nat.Core
-  renaming (_+_ to _+ℕ_;
-            _*_ to _*ℕ_;
-            module Props to ℕP)
-  using (ℕ; suc; zero)
+  renaming (module Props to ℕP)
+  using (ℕ; ℕ-Number; ℕ-Plus; ℕ-Times; suc; zero)
 
 
 _-ℕ_ : ℕ → ℕ → ℤ
@@ -39,29 +38,30 @@ instance
       fromNat = λ x → pos x
     }
 
-
-ℤ,≡ : Equiv ℤ
-ℤ,≡ = PropEq ℤ
-
-
-_+_ : ℤ → ℤ → ℤ
-pos x + pos y = pos (x +ℕ y)
-pos x + negsuc y = x -ℕ suc y
-negsuc x + pos y = y -ℕ suc x
-negsuc x + negsuc y = negsuc (suc (x +ℕ y))
-
-infixl 6 _+_
+  ℤ,≡ : Equiv ℤ
+  ℤ,≡ = PropEq ℤ
 
 
-_*_ : ℤ → ℤ → ℤ
-pos x * pos y = pos (x *ℕ y)
-pos zero * negsuc y = 0
-pos (suc x) * negsuc y = negsuc (y +ℕ x *ℕ suc y)
-negsuc x * pos zero = 0
-negsuc x * pos (suc y) = negsuc (y +ℕ x *ℕ suc y)
-negsuc x * negsuc y = pos (suc x *ℕ suc y)
+instance
+  ℤ-Plus : Plus ℤ
+  ℤ-Plus = record { _+_ = _+ℤ_ }
+    where
+    _+ℤ_ : ℤ → ℤ → ℤ
+    pos x +ℤ pos y = pos (x + y)
+    pos x +ℤ negsuc y = x -ℕ suc y
+    negsuc x +ℤ pos y = y -ℕ suc x
+    negsuc x +ℤ negsuc y = negsuc (suc (x + y))
 
-infixl 7 _*_
+  ℤ-Times : Times ℤ
+  ℤ-Times = record { _*_ = _*ℤ_ }
+    where
+    _*ℤ_ : ℤ → ℤ → ℤ
+    pos x *ℤ pos y = pos (x * y)
+    pos zero *ℤ negsuc y = 0
+    pos (suc x) *ℤ negsuc y = negsuc (y + x * suc y)
+    negsuc x *ℤ pos zero = 0
+    negsuc x *ℤ pos (suc y) = negsuc (y + x * suc y)
+    negsuc x *ℤ negsuc y = pos (suc x * suc y)
 
 
 neg : ℤ → ℤ
@@ -78,9 +78,9 @@ module Props where
   open module MyEquiv {A : Set} = Equiv (PropEq A)
 
   private
-    _!+!_ = cong2 _+_
+    _!+!_ = cong2 (the (ℤ → ℤ → ℤ) _+_)
     _!-ℕ!_ = cong2 _-ℕ_
-    _!*!_ = cong2 _*_
+    _!*!_ = cong2 (the (ℤ → ℤ → ℤ) _*_)
 
     R = λ {A} (x : A) → refl {x = x}
 
@@ -104,7 +104,7 @@ module Props where
   +-comm (negsuc x) (pos y) = refl
   +-comm (negsuc x) (negsuc y) = cong negsuc (cong suc (ℕP.+-comm x y))
 
-  sub-sum-right : ∀ x y z → x -ℕ suc (y +ℕ z) ≈ negsuc y + (x -ℕ z)
+  sub-sum-right : ∀ x y z → x -ℕ suc (y + z) ≈ negsuc y + (x -ℕ z)
   sub-sum-right x zero zero = refl
   sub-sum-right zero zero (suc z) = refl
   sub-sum-right (suc x) zero (suc z) = sub-sum-right x zero z
@@ -112,19 +112,19 @@ module Props where
   sub-sum-right zero (suc y) (suc z) = cong negsuc (cong suc (ℕP.+-suc-assoc y z))
   sub-sum-right (suc x) (suc y) (suc z) =
     begin
-      x -ℕ suc (y +ℕ suc z)     ≈[ R x !-ℕ! cong suc (ℕP.+-suc-assoc y z) ]
-      x -ℕ suc (suc y +ℕ z)     ≈[ sub-sum-right x (suc y) z ]
+      x -ℕ suc (y + suc z)      ≈[ R x !-ℕ! cong suc (ℕP.+-suc-assoc y z) ]
+      x -ℕ suc (suc y + z)      ≈[ sub-sum-right x (suc y) z ]
       negsuc (suc y) + (x -ℕ z)
     qed
 
-  sub-sum-left : ∀ x y z → (x +ℕ y) -ℕ z ≈ pos x + (y -ℕ z)
+  sub-sum-left : ∀ x y z → (x + y) -ℕ z ≈ pos x + (y -ℕ z)
   sub-sum-left zero y z = sym (+-left-id (y -ℕ z))
   sub-sum-left (suc x) y zero = refl
   sub-sum-left (suc x) zero (suc z) = ℕP.+-right-id x !-ℕ! R z
   sub-sum-left (suc x) (suc y) (suc z) =
     begin
-      (x +ℕ suc y) -ℕ z      ≈[ ℕP.+-suc-assoc x y !-ℕ! R z ]
-      suc (x +ℕ y) -ℕ z      ≈[ sub-sum-left (suc x) y z ]
+      (x + suc y) -ℕ z       ≈[ ℕP.+-suc-assoc x y !-ℕ! R z ]
+      suc (x + y) -ℕ z       ≈[ sub-sum-left (suc x) y z ]
       pos (suc x) + (y -ℕ z)
     qed
 
@@ -135,31 +135,31 @@ module Props where
     begin
       (x -ℕ suc y) + pos z ≈[ +-comm (x -ℕ suc y) (pos z) ]
       pos z + (x -ℕ suc y) ≈[ sym (sub-sum-left z x (suc y)) ]
-      (z +ℕ x) -ℕ suc y    ≈[ ℕP.+-comm z x !-ℕ! R (suc y) ]
-      (x +ℕ z) -ℕ suc y    ≈[ sub-sum-left x z (suc y) ]
+      (z + x) -ℕ suc y     ≈[ ℕP.+-comm z x !-ℕ! R (suc y) ]
+      (x + z) -ℕ suc y     ≈[ sub-sum-left x z (suc y) ]
       pos x + (z -ℕ suc y)
     qed
   +-assoc (pos x) (negsuc y) (negsuc z) =
     begin
       x -ℕ suc y + negsuc z   ≈[ +-comm (x -ℕ suc y) (negsuc z) ]
       negsuc z + (x -ℕ suc y) ≈[ sym (sub-sum-right x z (suc y)) ]
-      x -ℕ (suc z +ℕ suc y)   ≈[ R x !-ℕ! ℕP.+-comm (suc z) (suc y) ]
-      x -ℕ (suc y +ℕ suc z)   ≈[ R x !-ℕ! cong suc (ℕP.+-suc-assoc y z) ]
-      x -ℕ suc (suc (y +ℕ z))
+      x -ℕ (suc z + suc y)    ≈[ R x !-ℕ! ℕP.+-comm (suc z) (suc y) ]
+      x -ℕ (suc y + suc z)    ≈[ R x !-ℕ! cong suc (ℕP.+-suc-assoc y z) ]
+      x -ℕ suc (suc (y + z))
     qed
   +-assoc (negsuc x) (pos y) (pos z) =
     begin
       (y -ℕ suc x) + pos z ≈[ +-comm (y -ℕ suc x) (pos z) ]
       pos z + (y -ℕ suc x) ≈[ sym (sub-sum-left z y (suc x)) ]
-      (z +ℕ y) -ℕ suc x    ≈[ ℕP.+-comm z y !-ℕ! R (suc x) ]
-      (y +ℕ z) -ℕ suc x
+      (z + y) -ℕ suc x     ≈[ ℕP.+-comm z y !-ℕ! R (suc x) ]
+      (y + z) -ℕ suc x
     qed
   +-assoc (negsuc x) (pos y) (negsuc z) =
     begin
       y -ℕ suc x + negsuc z   ≈[ +-comm (y -ℕ suc x) (negsuc z) ]
       negsuc z + (y -ℕ suc x) ≈[ sym (sub-sum-right y z (suc x)) ]
-      y -ℕ (suc z +ℕ suc x)   ≈[ R y !-ℕ! ℕP.+-comm (suc z) (suc x) ]
-      y -ℕ (suc x +ℕ suc z)   ≈[ sub-sum-right y x (suc z) ]
+      y -ℕ (suc z + suc x)    ≈[ R y !-ℕ! ℕP.+-comm (suc z) (suc x) ]
+      y -ℕ (suc x + suc z)    ≈[ sub-sum-right y x (suc z) ]
       negsuc x + (y -ℕ suc z)
     qed
   +-assoc (negsuc x) (negsuc y) (pos zero) = refl
@@ -167,9 +167,9 @@ module Props where
   +-assoc (negsuc x) (negsuc y) (negsuc z) =
     cong negsuc $ cong suc $
     begin
-      suc ((x +ℕ y) +ℕ z) ≈[ cong suc (ℕP.+-assoc x y z) ]
-      suc (x +ℕ (y +ℕ z)) ≈[ sym (ℕP.+-suc-assoc x (y +ℕ z)) ]
-      x +ℕ (suc (y +ℕ z))
+      suc ((x + y) + z) ≈[ cong suc (ℕP.+-assoc x y z) ]
+      suc (x + (y + z)) ≈[ sym (ℕP.+-suc-assoc x (y + z)) ]
+      x + (suc (y + z))
     qed
 
   *-left-id : ∀ x → 1 * x ≈ x
@@ -187,9 +187,9 @@ module Props where
   *-assoc (pos zero) (pos (suc y)) (negsuc z) = refl
   *-assoc (pos (suc x)) (pos zero) (negsuc z) =
     begin
-      pos (x *ℕ 0) * negsuc z ≈[ cong pos (ℕP.*-right-zero x) !*! R (negsuc z) ]
-      pos 0 * negsuc z        ≈[ cong pos (sym (ℕP.*-right-zero x)) ]
-      pos (x *ℕ 0)
+      pos (x * 0) * negsuc z ≈[ cong pos (ℕP.*-right-zero x) !*! R (negsuc z) ]
+      pos 0 * negsuc z       ≈[ cong pos (sym (ℕP.*-right-zero x)) ]
+      pos (x * 0)
     qed
   *-assoc (pos (suc x)) (pos (suc y)) (negsuc z) =
     cong negsuc $ ℕP.suc-inj $
@@ -209,7 +209,7 @@ module Props where
     ℕP.*-assoc (suc x) (suc y) (suc z)
   *-assoc (negsuc x) (pos zero) (negsuc z) = refl
   *-assoc (negsuc x) (pos (suc y)) (negsuc z) = cong pos (ℕP.*-assoc (suc x) (suc y) (suc z))
-  *-assoc (negsuc x) (negsuc y) (pos zero) = cong pos (ℕP.*-right-zero (y +ℕ x *ℕ suc y))
+  *-assoc (negsuc x) (negsuc y) (pos zero) = cong pos (ℕP.*-right-zero (y + x * suc y))
   *-assoc (negsuc x) (negsuc y) (pos (suc z)) = cong pos (ℕP.*-assoc (suc x) (suc y) (suc z))
   *-assoc (negsuc x) (negsuc y) (negsuc z) =
     cong negsuc $ ℕP.suc-inj $
@@ -241,7 +241,7 @@ module Props where
   *-suc-dist : ∀ x y → pos (suc x) * y ≈ y + pos x * y
   *-suc-dist x (pos y) = refl
   *-suc-dist zero (negsuc y) = cong negsuc (ℕP.+-right-id y)
-  *-suc-dist (suc x) (negsuc y) = sub-sum-right 0 y (suc (y +ℕ x *ℕ suc y))
+  *-suc-dist (suc x) (negsuc y) = sub-sum-right 0 y (suc (y + x * suc y))
 
   *-+-left-dist-ℕ : ∀ x a b → pos x * (a + b) ≈ pos x * a + pos x * b
   *-+-left-dist-ℕ zero a b =
@@ -268,14 +268,14 @@ module Props where
   *-+-left-dist (negsuc x) a b =
     begin
       negsuc x * (a + b)                              ≈[ sym (neg-invol (negsuc x)) !*! R (a + b) ]
-      -1 * (pos (suc (x +ℕ zero))) * (a + b)          ≈[ cong neg (cong pos (ℕP.+-right-id (suc x))) !*! R (a + b) ]
+      -1 * (pos (suc (x + zero))) * (a + b)           ≈[ cong neg (cong pos (ℕP.+-right-id (suc x))) !*! R (a + b) ]
       -1 * (pos (suc x)) * (a + b)                    ≈[ *-assoc -1 (pos (suc x)) (a + b) ]
       -1 * (pos (suc x) * (a + b))                    ≈[ R -1 !*! *-+-left-dist-ℕ (suc x) a b ]
       -1 * (pos (suc x) * a + pos (suc x) * b)        ≈[ -1-left-dist (pos (suc x) * a) (pos (suc x) * b) ]
       -1 * (pos (suc x) * a) + -1 * (pos (suc x) * b) ≈[ sym (*-assoc -1 (pos (suc x)) a) !+! sym (*-assoc -1 (pos (suc x)) b) ]
       -1 * pos (suc x) * a + -1 * pos (suc x) * b     ≈[ R -1 !*! cong pos (cong suc (sym (ℕP.+-right-id x))) !*! R a !+!
                                                          R -1 !*! cong pos (cong suc (sym (ℕP.+-right-id x))) !*! R b ]
-      -1 * pos (suc (x +ℕ 0)) * a + -1 * pos (suc (x +ℕ 0)) * b     ≈[ neg-invol (negsuc x) !*! R a !+! neg-invol (negsuc x) !*! R b ]
+      -1 * pos (suc (x + 0)) * a + -1 * pos (suc (x + 0)) * b  ≈[ neg-invol (negsuc x) !*! R a !+! neg-invol (negsuc x) !*! R b ]
       negsuc x * a + negsuc x * b
     qed
 
