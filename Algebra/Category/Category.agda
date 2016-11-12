@@ -143,6 +143,38 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
       module iso1 = _≃_ iso1
       module iso2 = _≃_ iso2
 
+  Iso→Epic : ∀ {A B} {f : Hom A B} → Iso f → Epic f
+  Iso→Epic {f = f} iso {g1 = g1} {g2} p =
+    begin
+      g1                  ≈[ sym (right-id g1) ]
+      g1 ∘ id             ≈[ ∘-cong refl (sym iso.right-inv) ]
+      g1 ∘ (f ∘ iso.inv)  ≈[ sym (assoc g1 f iso.inv) ]
+      g1 ∘ f ∘ iso.inv    ≈[ ∘-cong p refl ]
+      g2 ∘ f ∘ iso.inv    ≈[ assoc g2 f iso.inv ]
+      g2 ∘ (f ∘ iso.inv)  ≈[ ∘-cong refl iso.right-inv ]
+      g2 ∘ id             ≈[ right-id g2 ]
+      g2
+    qed
+
+    where
+    module iso = Iso iso
+
+  Iso→Monic : ∀ {A B} {f : Hom A B} → Iso f → Monic f
+  Iso→Monic {f = f} iso {g1 = g1} {g2} p =
+    begin
+      g1                 ≈[ sym (left-id g1) ]
+      id ∘ g1            ≈[ ∘-cong (sym iso.left-inv) refl ]
+      iso.inv ∘ f ∘ g1   ≈[ assoc iso.inv f g1 ]
+      iso.inv ∘ (f ∘ g1) ≈[ ∘-cong refl p ]
+      iso.inv ∘ (f ∘ g2) ≈[ sym (assoc iso.inv f g2) ]
+      iso.inv ∘ f ∘ g2   ≈[ ∘-cong iso.left-inv refl ]
+      id ∘ g2            ≈[ left-id g2 ]
+      g2
+    qed
+
+    where
+    module iso = Iso iso
+
 
 -- A functor is a structure-preserving mapping from one category to
 -- another.
