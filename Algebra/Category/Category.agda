@@ -32,6 +32,21 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
       id
     qed
 
+  private
+    ∘-monic :
+      ∀ {A B C} {f : Hom B C} {g : Hom A B}
+      → Monic f
+      → Monic g
+      → Monic (f ∘ g)
+    ∘-monic {f = f} {g} pf pg {g1 = g1} {g2} p =
+      pg $ pf $
+      begin
+        f ∘ (g ∘ g1)  ≈[ sym (assoc f g g1) ]
+        f ∘ g ∘ g1    ≈[ p ]
+        f ∘ g ∘ g2    ≈[ assoc f g g2 ]
+        f ∘ (g ∘ g2)
+      qed
+
   BimonicEq : Equiv Ob
   BimonicEq =
     record {
@@ -71,19 +86,6 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
         g2
       qed
 
-    ∘-monic :
-      ∀ {A B C} {f : Hom B C} {g : Hom A B}
-      → Monic f
-      → Monic g
-      → Monic (f ∘ g)
-    ∘-monic {f = f} {g} pf pg {g1 = g1} {g2} p =
-      pg $ pf $
-      begin
-        f ∘ (g ∘ g1)  ≈[ sym (assoc f g g1) ]
-        f ∘ g ∘ g1    ≈[ p ]
-        f ∘ g ∘ g2    ≈[ assoc f g g2 ]
-        f ∘ (g ∘ g2)
-      qed
 
   -- Isomorphisms
   record Iso {A B} (f : Hom A B) : Set (h ⊔ r) where
@@ -227,6 +229,35 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
 
     where
     module iso = Iso iso
+
+  MonicOrd : PartialOrder Ob
+  MonicOrd =
+    record {
+      Eq = BimonicEq;
+      _≤_ = _≤_;
+      antisym = antisym;
+      refl' = refl';
+      trans = mtrans
+    }
+
+    where
+    _≤_ : Ob → Ob → Set _
+    A ≤ B = ∃ (λ (f : Hom A B) → Monic f)
+
+    antisym : ∀ {A B} → A ≤ B → B ≤ A → A bimonic B
+    antisym A≤B B≤A =
+      record {
+        to = fst A≤B;
+        from = fst B≤A;
+        to-monic = snd A≤B;
+        from-monic = snd B≤A
+      }
+
+    refl' : ∀ {A B} → A bimonic B → A ≤ B
+    refl' bi = _bimonic_.to bi , _bimonic_.to-monic bi
+
+    mtrans : ∀ {A B C} → A ≤ B → B ≤ C → A ≤ C
+    mtrans (f , p) (g , q) = g ∘ f , ∘-monic q p
 
 
 -- A functor is a structure-preserving mapping from one category to
