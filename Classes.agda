@@ -5,11 +5,6 @@
 module Classes where
 
 
--- record Ord {a} (A : Set a) : Set a where
---   field
---     _≤?_ : A → A →
-
-
 record Plus {a} (A : Set a) : Set a where
   field
     _+_ : A → A → A
