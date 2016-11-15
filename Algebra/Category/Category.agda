@@ -86,6 +86,7 @@ record Category {c h r} : Set (lsuc (c ⊔ h ⊔ r)) where
         g2
       qed
 
+  module BimonicEq = Equiv BimonicEq
 
   -- Isomorphisms
   record Iso {A B} (f : Hom A B) : Set (h ⊔ r) where
