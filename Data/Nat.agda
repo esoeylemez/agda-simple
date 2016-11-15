@@ -5,6 +5,7 @@
 module Data.Nat where
 
 open import Algebra.Group
+open import Classes
 open import Core
 open import Data.Nat.Core
 open import Data.Nat.Core public
