@@ -9,7 +9,9 @@ open import Classes
 open import Core
 open import Data.Nat.Core
 open import Data.Nat.Core public
-  using (ℕ; ℕ-Number; ℕ,≤; suc; zero)
+  using (ℕ; ℕ-Number; ℕ-Plus; ℕ-Times;
+         ℕ,≤; module ℕ,≤;
+         suc; zero)
 
 
 ℕ,+ : Monoid
