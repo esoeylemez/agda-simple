@@ -29,6 +29,8 @@ instance
   ℕ,≡ : Equiv ℕ
   ℕ,≡ = PropEq ℕ
 
+  module ℕ,≡ = Equiv ℕ,≡
+
 
 data _≤_ : ℕ → ℕ → Set where
   instance 0≤s : ∀ {y} → 0 ≤ y
