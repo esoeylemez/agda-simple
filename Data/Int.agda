@@ -5,6 +5,7 @@
 module Data.Int where
 
 open import Algebra.Group
+open import Classes
 open import Core
 open import Data.Int.Core
 open import Data.Int.Core public
